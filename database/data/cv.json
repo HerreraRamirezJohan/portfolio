@@ -1,0 +1,279 @@
+{
+  "_source": "Extracted from /home/poyoevil/user_poyoevil_server_config/cv/build_cv_fullstack_es.py (es) and build_cv_fullstack.py (en). HTML entities decoded; <b>label:</b> prefixes split into label/body.",
+  "user": {
+    "name": "Johan Osvaldo Herrera Ramírez",
+    "email": "johanherreraramirez@outlook.com"
+  },
+  "profile": {
+    "phone": "+52 33 2520 4729",
+    "public_email": "johanherreraramirez@outlook.com",
+    "linkedin_url": "https://linkedin.com/in/johan-osvaldo-herrera-ramirez",
+    "github_url": "https://github.com/HerreraRamirezJohan",
+    "headline": {
+      "es": "Ingeniero Informático",
+      "en": "Computer Engineer"
+    },
+    "location": {
+      "es": "Guadalajara, Jalisco, México",
+      "en": "Guadalajara, Jalisco, Mexico"
+    },
+    "summary": {
+      "es": "Desarrollador full stack con experiencia en frontend y backend. En el frontend, React, JavaScript, HTML y CSS; en el backend, PHP y Laravel, Python y Java, sobre Linux, Docker y PostgreSQL. Lo que más he aprendido a valorar no es el código: es leer con cuidado la especificación funcional, encontrar los huecos antes de que empiece el desarrollo y sentarme con quien de verdad va a usar la solución. Casi todo lo que rompe un proyecto es una regla de negocio que nadie documentó, no la elección de un framework. Trabajo cerca de las áreas del negocio; en Global Asiática con las áreas de almacén y calidad alrededor del módulo QM de SAP, que fue donde aprendí a pensar primero en el proceso y después en la pantalla.",
+      "en": "Full stack developer with experience across frontend and backend. On the frontend, React, JavaScript, HTML and CSS; on the backend, PHP and Laravel, Python and Java, running on Linux, Docker and PostgreSQL. The part I've come to value most isn't the code: it's reading the functional specification carefully, finding the gaps before development starts, and sitting down with the people who will actually use the thing. Most of what breaks a project is a business rule nobody wrote down, not a framework choice. I work close to the business areas, at Global Asiática with the warehouse and quality teams around SAP's QM module, which is where I learned to think about the process first and the screen second."
+    }
+  },
+  "work_experiences": [
+    {
+      "company": "MAVI de Occidente",
+      "start_date": "2026-03-01",
+      "end_date": "2026-08-01",
+      "is_current": false,
+      "sort_order": 1,
+      "role": {
+        "es": "Desarrollador Backend, SAP y Sistemas Empresariales",
+        "en": "Backend Developer, SAP and Enterprise Systems"
+      },
+      "location": { "es": "Guadalajara, Jal.", "en": "Guadalajara, Jal." },
+      "bullets": {
+        "es": [
+          {
+            "label": "Análisis de requerimientos",
+            "body": "leo completo cada documento de especificación funcional antes de estimar, buscando los huecos, normalmente en la forma en que se van a obtener los datos o en reglas de negocio que se dieron por hecho y nunca se escribieron, y devuelvo un documento breve de observaciones con las correcciones de flujo necesarias, mientras desarrollo las partes que no están en duda."
+          },
+          {
+            "label": "Trato directo con usuarios finales",
+            "body": "recorro el flujo real con las personas que van a usar el sistema, valido mi entendimiento contra lo que hacen todos los días y pongo dos o tres opciones sobre la mesa antes de escribir código. Bastante menos retrabajo al final de cada proyecto."
+          },
+          {
+            "label": "Desarrollo de APIs",
+            "body": "diseño y construyo servicios OData (v2 y v4) como backend de front ends a la medida e integraciones con terceros, cubriendo entidades, asociaciones y operaciones CRUD/query, incluyendo la forma del payload, filtrado y manejo de errores."
+          },
+          {
+            "label": "Construcción de consultas con vistas CDS",
+            "body": "escribo vistas CDS como capas de consulta reutilizables, con joins, asociaciones, filtros y agregaciones compuestos para que una vista bien construida alimente varios reportes y endpoints en lugar de una consulta nueva cada vez. Trabajo de capa de consulta sobre HANA, no especialización en la base de datos."
+          },
+          {
+            "label": "Front end y extensiones",
+            "body": "desarrollo y despliego aplicaciones SAPUI5/Fiori que consumen esas APIs, y uso user exits y BADIs para adaptar el software del proveedor al proceso de negocio sin romper la actualizabilidad."
+          }
+        ],
+        "en": [
+          {
+            "label": "Requirements analysis",
+            "body": "read every functional specification document (FSD) end to end before estimating, looking for the holes, usually in how the data is meant to be obtained, or in business rules assumed but never written down, then returned a short observations document with the flow corrections needed, while developing the parts that weren't in question so nothing stalled."
+          },
+          {
+            "label": "Working directly with end users",
+            "body": "walked the real workflow with the people who would use the system, validated my understanding against what they did day to day, and put two or three options on the table before writing code. Noticeably less rework at the end of each project."
+          },
+          {
+            "label": "API development",
+            "body": "designed and built OData services (v2 and v4) as the backend for custom front ends and third-party integrations, covering entities, associations and CRUD/query operations, including payload shape, filtering and error handling."
+          },
+          {
+            "label": "Query building with CDS views",
+            "body": "wrote CDS views as reusable query layers, with joins, associations, filters and aggregations composed so one well-built view feeds several reports and endpoints instead of a new ad-hoc query each time. Query-layer work on top of HANA rather than HANA database specialisation."
+          },
+          {
+            "label": "Front end and extensions",
+            "body": "built and deployed SAPUI5/Fiori applications consuming those APIs, and used user exits and BADIs to adapt vendor software to the business process without breaking upgradeability."
+          }
+        ]
+      }
+    },
+    {
+      "company": "Global Asiática",
+      "start_date": "2024-07-01",
+      "end_date": "2026-03-01",
+      "is_current": false,
+      "sort_order": 2,
+      "role": {
+        "es": "Desarrollador Full Stack",
+        "en": "Full Stack Developer"
+      },
+      "location": { "es": "Guadalajara, Jal.", "en": "Guadalajara, Jal." },
+      "bullets": {
+        "es": [
+          {
+            "label": "ERP web y plataforma de facturación",
+            "body": "construí y mantuve un ERP multiempresa y plataforma de facturación en PHP nativo sobre PostgreSQL, incluyendo el timbrado CFDI a través de los servicios SOAP/REST de un PAC y cron jobs para verificación y sincronización automáticas."
+          },
+          {
+            "label": "Laravel, React e Ionic",
+            "body": "desarrollé módulos de RH y tickets en Laravel 8 con front ends en React, y aplicaciones móviles multiplataforma con React y el framework Ionic desde una sola base de código, cubriendo el modelo de datos, los endpoints REST y la interfaz."
+          },
+          {
+            "label": "Docker y Linux",
+            "body": "configuré contenedores Docker y stacks de Compose para la aplicación, la base de datos y los servicios de apoyo, y administré los servidores Linux donde corrían, cubriendo permisos, Nginx/Apache, PHP-FPM, cron, respaldos y despliegues, para tener entornos reproducibles en lugar de armados a mano."
+          },
+          {
+            "label": "PostgreSQL",
+            "body": "diseñé esquemas, escribí y optimicé las consultas detrás de los reportes de la plataforma, y manejé respaldos y migraciones."
+          },
+          {
+            "label": "Backend empresarial (SAP)",
+            "body": "construí objetos ABAP a la medida (reportes, consultas de datos complejas, tablas y formularios) para logística y documentación financiera, y resolví tickets técnicos de forma interna, reduciendo la dependencia de una consultoría externa y bajando costo y tiempo de resolución."
+          }
+        ],
+        "en": [
+          {
+            "label": "Web ERP and billing platform",
+            "body": "built and maintained a multi-company ERP and invoicing platform in native PHP over PostgreSQL, including CFDI tax stamping through a PAC's SOAP/REST services and cron jobs for automated verification and syncing."
+          },
+          {
+            "label": "Laravel, React & Ionic",
+            "body": "developed HR and ticketing modules in Laravel 8 with React front ends, and built multiplatform mobile apps with React and the Ionic framework from a single codebase, from the data model and REST endpoints to the UI."
+          },
+          {
+            "label": "Docker & Linux",
+            "body": "configured Docker containers and Compose stacks for the application, database and supporting services, and administered the Linux servers they ran on, covering permissions, Nginx/Apache, PHP-FPM, cron, backups and deployments, so environments were reproducible instead of hand-built."
+          },
+          {
+            "label": "PostgreSQL",
+            "body": "designed schemas, wrote and tuned the queries behind the platform's reporting, and handled backups and migrations."
+          },
+          {
+            "label": "Enterprise backend (SAP)",
+            "body": "built custom ABAP objects (reports, complex data queries, custom tables and forms) for logistics and financial documentation, and solved technical tickets in-house, cutting dependence on an external consultancy and reducing both cost and resolution time."
+          }
+        ]
+      }
+    },
+    {
+      "company": "Operadora Macrobús",
+      "start_date": "2023-06-01",
+      "end_date": "2024-03-01",
+      "is_current": false,
+      "sort_order": 3,
+      "role": {
+        "es": "Técnico de Soporte y Desarrollo de Sistemas",
+        "en": "Systems Support & Development Technician"
+      },
+      "location": { "es": "Guadalajara, Jal.", "en": "Guadalajara, Jal." },
+      "bullets": {
+        "es": [
+          {
+            "label": null,
+            "body": "Di mantenimiento al software de logística de transporte (LIS Solutions) y desarrollé módulos puente externos en C#, VB y PHP para mover datos entre el ERP y sistemas con los que no se comunicaba."
+          },
+          {
+            "label": null,
+            "body": "Levanté requerimientos con el personal de operaciones y los convertí en aplicaciones a la medida que extendían el software base."
+          }
+        ],
+        "en": [
+          {
+            "label": null,
+            "body": "Maintained transport logistics software (LIS Solutions) and developed external bridge modules in C#, VB and PHP to move data between the ERP and systems it didn't talk to."
+          },
+          {
+            "label": null,
+            "body": "Gathered requirements from operations staff and turned them into custom applications that extended the core software."
+          }
+        ]
+      }
+    },
+    {
+      "company": "Universidad de Guadalajara (CUCSH)",
+      "start_date": "2023-03-01",
+      "end_date": "2023-09-01",
+      "is_current": false,
+      "sort_order": 4,
+      "role": {
+        "es": "Practicante de Desarrollo Web",
+        "en": "Web Development Intern"
+      },
+      "location": { "es": "Guadalajara, Jal.", "en": "Guadalajara, Jal." },
+      "bullets": {
+        "es": [
+          {
+            "label": null,
+            "body": "Desarrollé una aplicación CRUD de gestión en Laravel 9 para la programación académica, y ejecuté procesos ETL con Python (Pandas/NumPy) para migrar datos de Excel a bases de datos SQL."
+          }
+        ],
+        "en": [
+          {
+            "label": null,
+            "body": "Developed a management CRUD application in Laravel 9 for academic scheduling, and ran ETL processes with Python (Pandas/NumPy) to migrate data from Excel into SQL databases."
+          }
+        ]
+      }
+    }
+  ],
+  "educations": [
+    {
+      "institution": "Universidad de Guadalajara (CUCEI)",
+      "start_year": 2019,
+      "end_year": 2023,
+      "sort_order": 1,
+      "degree": {
+        "es": "Ingeniería en Computación",
+        "en": "Bachelor of Engineering in Computer Science"
+      },
+      "location": { "es": "México", "en": "Mexico" },
+      "notes": { "es": null, "en": null }
+    }
+  ],
+  "skill_groups": [
+    {
+      "sort_order": 1,
+      "label": { "es": "Backend y Front End", "en": "Backend & Front End" },
+      "description": {
+        "es": "PHP (nativo y Laravel), Java (Spring Boot), Python, C#, VB, ABAP / ABAP orientado a objetos; React, Ionic (apps multiplataforma), JavaScript, HTML/CSS, SAPUI5 / Fiori.",
+        "en": "PHP (native & Laravel), Java (Spring Boot), Python, C#, VB, ABAP / OO ABAP; React, Ionic (multiplatform apps), JavaScript, HTML/CSS, SAPUI5 / Fiori."
+      },
+      "skills": ["PHP", "Laravel", "Java", "Spring Boot", "Python", "C#", "VB", "ABAP", "OO ABAP", "React", "Ionic", "JavaScript", "HTML/CSS", "SAPUI5", "Fiori"]
+    },
+    {
+      "sort_order": 2,
+      "label": { "es": "APIs e Integración", "en": "APIs & Integration" },
+      "description": {
+        "es": "Diseño y consumo de REST y SOAP, OData v2 y v4, integraciones con terceros (timbrado CFDI vía PAC), autenticación y manejo de errores, JSON/XML.",
+        "en": "REST and SOAP design and consumption, OData v2 and v4, third-party integrations (CFDI stamping via PAC), authentication and error handling, JSON/XML."
+      },
+      "skills": ["REST", "SOAP", "OData v2", "OData v4", "CFDI / PAC", "JSON", "XML"]
+    },
+    {
+      "sort_order": 3,
+      "label": { "es": "Bases de Datos", "en": "Databases" },
+      "description": {
+        "es": "PostgreSQL, MySQL, MS SQL Server. Diseño de esquemas, construcción y optimización de consultas, migraciones, vistas CDS como capa de consulta reutilizable sobre SAP HANA.",
+        "en": "PostgreSQL, MySQL, MS SQL Server. Schema design, query building and tuning, migrations, CDS views as a reusable query layer over SAP HANA."
+      },
+      "skills": ["PostgreSQL", "MySQL", "MS SQL Server", "SAP HANA", "CDS Views"]
+    },
+    {
+      "sort_order": 4,
+      "label": { "es": "Infraestructura y Herramientas", "en": "Infrastructure & Tooling" },
+      "description": {
+        "es": "Docker y Docker Compose, administración de servidores Linux (Nginx/Apache, cron, respaldos), Git/GitHub, Azure, Pandas/NumPy.",
+        "en": "Docker and Docker Compose, Linux server administration (Nginx/Apache, cron, backups), Git/GitHub, Azure, Pandas/NumPy."
+      },
+      "skills": ["Docker", "Docker Compose", "Linux", "Nginx", "Apache", "Git", "GitHub", "Azure", "Pandas", "NumPy"]
+    },
+    {
+      "sort_order": 5,
+      "label": { "es": "Análisis y Habilidades Blandas", "en": "Analysis & Soft Skills" },
+      "description": {
+        "es": "Análisis y levantamiento de requerimientos con usuarios finales; revisión de documentos de especificación funcional y devolución de observaciones escritas sobre huecos y reglas de negocio no documentadas antes de desarrollar; validación de procesos; causa raíz (5 Por qués); Scrum.",
+        "en": "Requirements analysis and elicitation with end users; reviewing functional specification documents (FSD / BRD) and returning written observations on gaps and undocumented business rules before development starts; process validation; root-cause analysis (5 Whys); Scrum."
+      },
+      "skills": ["Requirements Analysis", "FSD / BRD Review", "Process Validation", "5 Whys", "Scrum"]
+    }
+  ],
+  "languages": [
+    {
+      "code": "es",
+      "sort_order": 1,
+      "name": { "es": "Español", "en": "Spanish" },
+      "level_label": { "es": "Nativo", "en": "Native" }
+    },
+    {
+      "code": "en",
+      "sort_order": 2,
+      "name": { "es": "Inglés", "en": "English" },
+      "level_label": { "es": "B1 - Intermedio", "en": "B1 - Intermediate" }
+    }
+  ],
+  "projects": []
+}
