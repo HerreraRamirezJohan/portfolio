@@ -12,7 +12,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Apache on the host owns :80 and reverse-proxies to this container.
+        // The container publishes only on 127.0.0.1 (see compose.yaml), so the
+        // sole possible client is that proxy -- but the request arrives from the
+        // Docker bridge gateway, not 127.0.0.1, so a loopback-pinned list would
+        // never match. Trusting all proxies is safe given the loopback binding.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
