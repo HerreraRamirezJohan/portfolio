@@ -11,6 +11,12 @@ class Education extends Model
 {
     use HasTranslations;
 
+    /**
+     * The inflector treats "education" as uncountable, so it would resolve to
+     * `education` rather than the `educations` table the migration creates.
+     */
+    protected $table = 'educations';
+
     protected $fillable = [
         'user_id', 'institution', 'start_year', 'end_year',
         'sort_order', 'degree', 'location', 'notes',

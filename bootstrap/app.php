@@ -18,6 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Docker bridge gateway, not 127.0.0.1, so a loopback-pinned list would
         // never match. Trusting all proxies is safe given the loopback binding.
         $middleware->trustProxies(at: '*');
+
+        // The admin login route is `admin.login`, not the framework default
+        // `login`, so guests would otherwise hit a missing-route error.
+        $middleware->redirectGuestsTo(fn () => route('admin.login'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
