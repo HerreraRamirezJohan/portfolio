@@ -9,6 +9,7 @@ use App\Models\SkillGroup;
 use App\Models\User;
 use App\Models\WorkExperience;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 
 /**
@@ -74,6 +75,12 @@ class CvSeeder extends Seeder
      */
     private function seedProfile(User $user, array $data): void
     {
+        // Only claim a photo when the file is actually on disk, so a fresh
+        // checkout without storage/app/public/profile does not render a broken
+        // image. Re-seeding never clears a photo set through the admin.
+        $photo = 'profile/profile.webp';
+        $existing = $user->profile?->photo_path;
+
         $user->profile()->updateOrCreate(
             ['user_id' => $user->id],
             [
@@ -81,6 +88,7 @@ class CvSeeder extends Seeder
                 'public_email' => $data['public_email'],
                 'linkedin_url' => $data['linkedin_url'],
                 'github_url' => $data['github_url'],
+                'photo_path' => Storage::disk('public')->exists($photo) ? $photo : $existing,
                 'headline' => $data['headline'],
                 'location' => $data['location'],
                 'summary' => $data['summary'],
