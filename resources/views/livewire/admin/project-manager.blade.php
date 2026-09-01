@@ -23,6 +23,20 @@
                 </x-admin.field>
             </div>
 
+            <div class="grid gap-5 sm:grid-cols-3">
+                <x-admin.field :label="__('Year')">
+                    <x-admin.text-input wire:model="year" placeholder="2024 – 2026" />
+                    @error('year') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                </x-admin.field>
+                <div class="sm:col-span-2">
+                    <x-admin.field :label="__('Tech stack')">
+                        <x-admin.text-input wire:model="tech_stack_csv" placeholder="Laravel, PostgreSQL, Docker" />
+                        <p class="mt-1 text-xs text-stone-500 dark:text-stone-400">{{ __('Comma separated. Names matching the icon set render with their mark.') }}</p>
+                        @error('tech_stack_csv') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </x-admin.field>
+                </div>
+            </div>
+
             <x-admin.field :label="__('Summary') . ' (' . strtoupper($formLocale) . ')'">
                 <textarea class="w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm dark:border-stone-700 dark:bg-stone-950"
                           rows="2" wire:model="summary.{{ $formLocale }}" wire:key="proj-sum-{{ $formLocale }}"></textarea>

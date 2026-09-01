@@ -13,14 +13,18 @@ class Project extends Model
 
     protected $fillable = [
         'user_id', 'slug', 'repo_url', 'live_url', 'image_path',
-        'is_published', 'sort_order', 'title', 'summary', 'description',
+        'tech_stack', 'year', 'is_published', 'sort_order',
+        'title', 'summary', 'description',
     ];
 
     public array $translatable = ['title', 'summary', 'description'];
 
     protected function casts(): array
     {
-        return ['is_published' => 'boolean'];
+        return [
+            'is_published' => 'boolean',
+            'tech_stack' => 'array',
+        ];
     }
 
     public function user(): BelongsTo

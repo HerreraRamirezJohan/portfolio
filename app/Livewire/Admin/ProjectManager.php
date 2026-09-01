@@ -26,6 +26,13 @@ class ProjectManager extends Component
 
     public bool $is_published = true;
 
+    public string $year = '';
+
+    /**
+     * Edited as a comma-separated string; stored as a json array.
+     */
+    public string $tech_stack_csv = '';
+
     /** @var array<string, string> */
     public array $title = [];
 
@@ -52,6 +59,8 @@ class ProjectManager extends Component
             'repo_url' => 'nullable|url|max:255',
             'live_url' => 'nullable|url|max:255',
             'is_published' => 'boolean',
+            'year' => 'nullable|string|max:32',
+            'tech_stack_csv' => 'nullable|string|max:255',
             'title.*' => 'nullable|string|max:255',
             'summary.*' => 'nullable|string|max:1000',
             'description.*' => 'nullable|string|max:5000',
@@ -77,6 +86,8 @@ class ProjectManager extends Component
         $this->repo_url = $row->repo_url ?? '';
         $this->live_url = $row->live_url ?? '';
         $this->is_published = $row->is_published;
+        $this->year = $row->year ?? '';
+        $this->tech_stack_csv = implode(', ', $row->tech_stack ?? []);
         $this->title = $this->fillTranslations($row->getTranslations('title'));
         $this->summary = $this->fillTranslations($row->getTranslations('summary'));
         $this->description = $this->fillTranslations($row->getTranslations('description'));
@@ -101,6 +112,8 @@ class ProjectManager extends Component
             'repo_url' => $this->repo_url ?: null,
             'live_url' => $this->live_url ?: null,
             'is_published' => $this->is_published,
+            'year' => $this->year ?: null,
+            'tech_stack' => $this->techStack(),
             'title' => array_filter($this->title),
             'summary' => array_filter($this->summary),
             'description' => array_filter($this->description),
@@ -117,6 +130,22 @@ class ProjectManager extends Component
 
         $this->resetForm();
         session()->flash('status', __('Saved.'));
+    }
+
+    /**
+     * Split the comma-separated field into a clean list, or null when empty.
+     *
+     * @return array<int, string>|null
+     */
+    private function techStack(): ?array
+    {
+        $items = collect(explode(',', $this->tech_stack_csv))
+            ->map(fn ($item) => trim((string) $item))
+            ->filter()
+            ->values()
+            ->all();
+
+        return $items ?: null;
     }
 
     public function delete(int $id): void
@@ -142,6 +171,8 @@ class ProjectManager extends Component
         $this->repo_url = '';
         $this->live_url = '';
         $this->is_published = true;
+        $this->year = '';
+        $this->tech_stack_csv = '';
         $this->title = $this->emptyTranslations();
         $this->summary = $this->emptyTranslations();
         $this->description = $this->emptyTranslations();
