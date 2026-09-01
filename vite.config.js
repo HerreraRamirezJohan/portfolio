@@ -12,6 +12,16 @@ export default defineConfig({
                 bunny('Instrument Sans', {
                     weights: [400, 500, 600],
                 }),
+                // Display face for the name and section titles. Instrument
+                // Serif ships one weight; the italic carries the accents.
+                bunny('Instrument Serif', {
+                    weights: [400],
+                    styles: ['normal', 'italic'],
+                }),
+                // Metadata, dates and the SAP module badges.
+                bunny('IBM Plex Mono', {
+                    weights: [400, 500, 600],
+                }),
             ],
         }),
         tailwindcss(),
