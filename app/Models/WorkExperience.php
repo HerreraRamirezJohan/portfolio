@@ -52,4 +52,22 @@ class WorkExperience extends Model
 
         return Str::ucfirst($start).' – '.Str::ucfirst($end);
     }
+
+    /**
+     * "Mar — Aug 2026" within one year, otherwise "2024 — 2026".
+     */
+    public function compactRange(): string
+    {
+        if ($this->is_current || $this->end_date === null) {
+            return $this->start_date->year.' — '.__('Present');
+        }
+
+        if ($this->start_date->year !== $this->end_date->year) {
+            return $this->start_date->year.' — '.$this->end_date->year;
+        }
+
+        $month = fn ($date) => Str::ucfirst(rtrim($date->locale(app()->getLocale())->isoFormat('MMM'), '.'));
+
+        return $month($this->start_date).' — '.$month($this->end_date).' '.$this->end_date->year;
+    }
 }

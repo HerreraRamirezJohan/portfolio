@@ -65,6 +65,21 @@ class TechIcon
     }
 
     /**
+     * Stack names as {name, icon} chips for the API, so the React front end
+     * never needs its own copy of the map.
+     *
+     * @param  array<int, string>|null  $names
+     * @return array<int, array{name: string, icon: string|null}>
+     */
+    public static function chips(?array $names): array
+    {
+        return array_map(
+            fn (string $name) => ['name' => $name, 'icon' => self::slug($name)],
+            array_values($names ?? []),
+        );
+    }
+
+    /**
      * True when the name belongs to the SAP family -- used to tint the chip.
      */
     public static function isSap(?string $name): bool

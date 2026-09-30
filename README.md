@@ -41,6 +41,30 @@ php artisan boost:install
 
 Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
 
+## Docker Setup
+
+This project uses Docker Compose for containerization.
+
+### Build the Image
+
+```bash
+docker compose build
+```
+
+### Start the Container
+
+```bash
+docker compose up -d
+```
+
+The application will be available at `http://127.0.0.1:8001`.
+
+### Stop the Container
+
+```bash
+docker compose down
+```
+
 ## Contributing
 
 Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).

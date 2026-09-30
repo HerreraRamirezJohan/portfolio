@@ -1,7 +1,6 @@
 @import 'tailwindcss';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
+@source '../js';
 
 /*
 |--------------------------------------------------------------------------
@@ -17,85 +16,107 @@
 
 /*
 |--------------------------------------------------------------------------
-| Palette -- Graphite & Signal Amber
+| Palette -- Paper & Paths
 |--------------------------------------------------------------------------
 |
-| Semantic names, not colour names, so the same utility works in both
-| themes. Light is the default; .dark overrides the same custom properties.
-|
-| The amber is darkened in light mode: oklch(.78 .15 75) is a mid-tone that
-| carries body text on a dark ground but fails contrast on white, so light
-| mode drops the lightness to .58.
+| A quiet neutral ground with one colour per career path. The path colours
+| differ in lightness as well as hue, and each ships a soft tint for chips.
+| Dark mode lifts them so they keep contrast on a near-black ground, which
+| is also why text on a filled path colour flips to `--c-on-path`.
 |
 */
 :root {
-    --c-base: #faf9f7;
+    --c-base: #f6f6f3;
     --c-surface: #ffffff;
-    --c-elevated: #f3f1ed;
-    --c-ink: #17171a;
-    --c-muted: #55555e;
-    --c-faint: #7c7c86;
-    --c-line: rgb(23 23 26 / 0.12);
-    --c-line-soft: rgb(23 23 26 / 0.07);
-    --c-accent: oklch(0.58 0.13 68);
-    --c-accent-ink: #ffffff;
-    --c-accent-soft: oklch(0.58 0.13 68 / 0.09);
-    --c-accent-line: oklch(0.58 0.13 68 / 0.28);
-    --c-steel: #5a6172;
+    --c-ink: #121214;
+    --c-muted: #57575e;
+    --c-faint: #6b6b73;
+    --c-chip: #3a3a40;
+    --c-line: #e2e2dc;
+    --c-line-strong: #d6d6cf;
+
+    --c-invert: #121214;
+    --c-invert-ink: #f6f6f3;
+    --c-invert-soft: #d4d4d8;
+    --c-invert-muted: #a1a1aa;
+    --c-invert-line: #34343a;
+    --c-invert-raised: #1c1c20;
+
+    --c-sap: #2448c8;
+    --c-sap-soft: #e8ecfa;
+    --c-web: #b8430b;
+    --c-web-soft: #f8eae2;
+    --c-infra: #0b6e63;
+    --c-infra-soft: #e2f1ee;
+    --c-on-path: #ffffff;
+
+    --c-path: var(--c-ink);
+    --c-path-soft: var(--c-line);
 }
 
 .dark {
-    --c-base: #0b0b0d;
-    --c-surface: #141417;
-    --c-elevated: #0e0e11;
-    --c-ink: #edece8;
-    --c-muted: rgb(237 236 232 / 0.66);
-    --c-faint: rgb(237 236 232 / 0.45);
-    --c-line: rgb(237 236 232 / 0.1);
-    --c-line-soft: rgb(237 236 232 / 0.06);
-    --c-accent: oklch(0.78 0.15 75);
-    --c-accent-ink: #0b0b0d;
-    --c-accent-soft: oklch(0.78 0.15 75 / 0.09);
-    --c-accent-line: oklch(0.78 0.15 75 / 0.28);
-    --c-steel: #8b93a3;
+    --c-base: #0f0f11;
+    --c-surface: #17171a;
+    --c-ink: #ededea;
+    --c-muted: #a6a6ae;
+    --c-faint: #8c8c95;
+    --c-chip: #cfcfd4;
+    --c-line: #26262b;
+    --c-line-strong: #34343a;
+
+    --c-invert: #17171a;
+    --c-invert-ink: #ededea;
+    --c-invert-soft: #d4d4d8;
+    --c-invert-muted: #a1a1aa;
+    --c-invert-line: #2e2e34;
+    --c-invert-raised: #1f1f23;
+
+    --c-sap: #8fa6ff;
+    --c-sap-soft: rgb(143 166 255 / 0.13);
+    --c-web: #f0955f;
+    --c-web-soft: rgb(240 149 95 / 0.13);
+    --c-infra: #4fc3ae;
+    --c-infra-soft: rgb(79 195 174 / 0.13);
+    --c-on-path: #0f0f11;
 }
 
 /*
 | `inline` so the generated utilities reference the custom properties above
-| instead of copying their values -- that is what lets them flip on .dark.
+| instead of copying their values -- that is what lets them flip on .dark
+| and per path.
 */
 @theme inline {
-    --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
-    --font-display: var(--font-instrument-serif), Georgia, 'Times New Roman', serif;
-    --font-mono: var(--font-ibm-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+    --font-sans: var(--font-schibsted-grotesk), ui-sans-serif, system-ui, sans-serif;
+    --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
     --color-base: var(--c-base);
     --color-surface: var(--c-surface);
-    --color-elevated: var(--c-elevated);
     --color-ink: var(--c-ink);
     --color-muted: var(--c-muted);
     --color-faint: var(--c-faint);
+    --color-chip: var(--c-chip);
     --color-line: var(--c-line);
-    --color-line-soft: var(--c-line-soft);
-    --color-accent: var(--c-accent);
-    --color-accent-ink: var(--c-accent-ink);
-    --color-accent-soft: var(--c-accent-soft);
-    --color-accent-line: var(--c-accent-line);
-    --color-steel: var(--c-steel);
+    --color-line-strong: var(--c-line-strong);
+
+    --color-invert: var(--c-invert);
+    --color-invert-ink: var(--c-invert-ink);
+    --color-invert-soft: var(--c-invert-soft);
+    --color-invert-muted: var(--c-invert-muted);
+    --color-invert-line: var(--c-invert-line);
+    --color-invert-raised: var(--c-invert-raised);
+
+    --color-path: var(--c-path);
+    --color-path-soft: var(--c-path-soft);
+    --color-on-path: var(--c-on-path);
 
     --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/*
-|--------------------------------------------------------------------------
-| Base
-|--------------------------------------------------------------------------
-*/
 @layer base {
     html {
         scroll-behavior: smooth;
-        /* Fixed nav is 64px; anchors must not land underneath it. */
-        scroll-padding-top: 5rem;
+        /* The sticky nav is 64–80px; anchors must not land underneath it. */
+        scroll-padding-top: 6rem;
     }
 
     body {
@@ -104,14 +125,34 @@
     }
 
     ::selection {
-        background-color: var(--c-accent);
-        color: var(--c-accent-ink);
+        background-color: var(--c-ink);
+        color: var(--c-base);
     }
 
     :focus-visible {
-        outline: 2px solid var(--c-accent);
+        outline: 2px solid var(--c-path);
         outline-offset: 3px;
         border-radius: 2px;
+    }
+
+    /* Scopes `text-path`, `bg-path-soft` etc. to one path's colour. */
+    .theme-sap {
+        --c-path: var(--c-sap);
+        --c-path-soft: var(--c-sap-soft);
+    }
+
+    .theme-web {
+        --c-path: var(--c-web);
+        --c-path-soft: var(--c-web-soft);
+    }
+
+    .theme-infra {
+        --c-path: var(--c-infra);
+        --c-path-soft: var(--c-infra-soft);
+    }
+
+    summary::-webkit-details-marker {
+        display: none;
     }
 }
 
@@ -120,10 +161,9 @@
 | Motion
 |--------------------------------------------------------------------------
 |
-| Reveals start hidden and are un-hidden by the IntersectionObserver in
-| app.js. If that script never runs -- JS disabled, an error, a crawler --
-| the `no-js` guard below means content still renders, so a reveal is never
-| the only thing making an element visible.
+| Reveals start hidden and are shown by <Reveal> (resources/js/components)
+| the first time they scroll into view. With reduced motion they are never
+| hidden at all.
 |
 */
 @layer components {
@@ -136,35 +176,9 @@
         transition-delay: var(--reveal-delay, 0ms);
     }
 
-    .reveal.is-visible,
-    html.no-js .reveal {
+    .reveal.is-visible {
         opacity: 1;
         transform: none;
-    }
-
-    /* Timeline connector draws downward as the section scrolls past. */
-    .timeline-line {
-        transform-origin: top;
-        transform: scaleY(var(--draw, 0));
-        transition: transform 120ms linear;
-    }
-
-    html.no-js .timeline-line {
-        transform: none;
-    }
-
-    .marquee-track {
-        animation: marquee 38s linear infinite;
-    }
-
-    @keyframes marquee {
-        from {
-            transform: translateX(0);
-        }
-        to {
-            /* Track is duplicated, so -50% is one seamless loop. */
-            transform: translateX(-50%);
-        }
     }
 
     .lift {
@@ -174,15 +188,11 @@
     }
 
     .lift:hover {
-        transform: translateY(-4px);
-        border-color: var(--c-accent-line);
+        transform: translateY(-3px);
+        border-color: var(--c-path);
     }
 }
 
-/*
-| Non-negotiable: everything above is decoration. Anyone who has asked their
-| system to reduce motion gets the finished state immediately.
-*/
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;
@@ -192,14 +202,6 @@
         opacity: 1 !important;
         transform: none !important;
         transition: none !important;
-    }
-
-    .timeline-line {
-        transform: none !important;
-    }
-
-    .marquee-track {
-        animation: none !important;
     }
 
     .lift:hover {

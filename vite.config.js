@@ -1,29 +1,27 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import { bunny } from 'laravel-vite-plugin/fonts';
+import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            input: ['resources/css/app.css', 'resources/js/app.jsx'],
             refresh: true,
             fonts: [
-                bunny('Instrument Sans', {
+                // One family for everything readable: 600 for headings,
+                // 400/500 for body and UI.
+                bunny('Schibsted Grotesk', {
                     weights: [400, 500, 600],
                 }),
-                // Display face for the name and section titles. Instrument
-                // Serif ships one weight; the italic carries the accents.
-                bunny('Instrument Serif', {
-                    weights: [400],
-                    styles: ['normal', 'italic'],
-                }),
-                // Metadata, dates and the SAP module badges.
-                bunny('IBM Plex Mono', {
-                    weights: [400, 500, 600],
+                // Dates, labels and stack tokens only.
+                bunny('JetBrains Mono', {
+                    weights: [400, 500],
                 }),
             ],
         }),
+        react(),
         tailwindcss(),
     ],
     server: {

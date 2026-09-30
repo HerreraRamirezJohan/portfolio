@@ -1,26 +1,19 @@
 <?php
 
+use App\Http\Controllers\SpaController;
 use App\Http\Middleware\SetLocale;
-use App\Livewire\Admin\Dashboard;
-use App\Livewire\Admin\EducationManager;
-use App\Livewire\Admin\ExperienceManager;
-use App\Livewire\Admin\LanguageManager;
-use App\Livewire\Admin\Login;
-use App\Livewire\Admin\ProfileForm;
-use App\Livewire\Admin\ProjectManager;
-use App\Livewire\Admin\SkillGroupManager;
-use App\Livewire\PublicSite\Portfolio;
-use Illuminate\Support\Facades\Auth;
+use App\Support\CareerPaths;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Public site
+| React shell
 |--------------------------------------------------------------------------
 |
-| Locale-prefixed: /es and /en. "/" redirects to the default locale.
-| There is deliberately no registration route -- this is a single-user site
-| and the one account comes from CvSeeder.
+| Every page is rendered by the React app in resources/js, which reads its
+| data from routes/api.php. These routes exist so that deep links load the
+| shell with the right <head>, and so that unknown URLs still 404 on the
+| server: an unlisted locale or path never matches.
 |
 */
 
@@ -30,35 +23,31 @@ Route::prefix('{locale}')
     ->whereIn('locale', config('portfolio.locales'))
     ->middleware(SetLocale::class)
     ->group(function () {
-        Route::get('/', Portfolio::class)->name('portfolio');
+        Route::get('/', [SpaController::class, 'portfolio'])->name('portfolio');
+
+        Route::get('{path}', [SpaController::class, 'path'])
+            ->whereIn('path', CareerPaths::keys())
+            ->name('path');
     });
 
 /*
 |--------------------------------------------------------------------------
-| Admin
+| Admin shell
 |--------------------------------------------------------------------------
+|
+| Guarded by the session here too, so a signed-out visitor never sees the
+| admin UI flash before the API answers 401. React Router takes over from
+| the shell; the data itself is protected by auth:sanctum in routes/api.php.
+|
 */
 
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::middleware('guest')->group(function () {
-        Route::get('login', Login::class)->name('login');
-    });
+    Route::get('login', [SpaController::class, 'admin'])->middleware('guest')->name('login');
 
     Route::middleware('auth')->group(function () {
-        Route::get('/', Dashboard::class)->name('dashboard');
-        Route::get('profile', ProfileForm::class)->name('profile');
-        Route::get('experience', ExperienceManager::class)->name('experience');
-        Route::get('education', EducationManager::class)->name('education');
-        Route::get('skills', SkillGroupManager::class)->name('skills');
-        Route::get('languages', LanguageManager::class)->name('languages');
-        Route::get('projects', ProjectManager::class)->name('projects');
-
-        Route::post('logout', function () {
-            Auth::logout();
-            request()->session()->invalidate();
-            request()->session()->regenerateToken();
-
-            return redirect()->route('admin.login');
-        })->name('logout');
+        Route::get('/', [SpaController::class, 'admin'])->name('dashboard');
+        Route::get('{section}', [SpaController::class, 'admin'])
+            ->whereIn('section', ['profile', 'experience', 'education', 'skills', 'languages', 'projects'])
+            ->name('section');
     });
 });
