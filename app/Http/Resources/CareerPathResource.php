@@ -36,13 +36,7 @@ class CareerPathResource extends JsonResource
             'flow' => [
                 'title' => __($flow['title']),
                 'caption' => __($flow['caption']),
-                'dark' => $flow['dark'] ?? false,
-                'nodes' => collect($flow['nodes'])
-                    ->map(fn (array $node, int $i) => [
-                        'layer' => __($node[0]),
-                        'name' => __($node[1]),
-                        'focus' => $i === $flow['focus'],
-                    ]),
+                'nodes' => self::nodes($flow),
                 'group' => $flow['group'] ?? null,
                 'tags' => array_map(fn (string $tag) => __($tag), $flow['tags']),
                 'note' => __($flow['note']),
@@ -55,5 +49,23 @@ class CareerPathResource extends JsonResource
                 'body' => __($extra['body']),
             ], $path['extras']),
         ];
+    }
+
+    /**
+     * A path's flow diagram as translated nodes. Also feeds the pipelines
+     * on the home page.
+     *
+     * @param  array<string, mixed>  $flow
+     * @return list<array{layer: string, name: string, focus: bool}>
+     */
+    public static function nodes(array $flow): array
+    {
+        return collect($flow['nodes'])
+            ->map(fn (array $node, int $i) => [
+                'layer' => __($node[0]),
+                'name' => __($node[1]),
+                'focus' => $i === $flow['focus'],
+            ])
+            ->all();
     }
 }

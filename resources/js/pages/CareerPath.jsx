@@ -4,16 +4,17 @@
 */
 
 import { Fragment } from 'react';
-import { Link, useParams } from 'react-router';
-import { Icon } from '../components/Icon';
+import { useParams } from 'react-router';
+import { Macro } from '../components/Macro';
 import { Reveal } from '../components/Reveal';
 import { TechChips } from '../components/TechChip';
 import { config } from '../lib/config';
 import { useLocale } from '../lib/i18n';
-import { useApi } from '../lib/useApi';
+import { FlowBox, ProjectFooter } from '../site/Blocks';
 import { Contact } from '../site/Contact';
 import { Nav } from '../site/Nav';
-import { PageStatus, useDocumentMeta } from '../site/PublicLayout';
+import { PageLink } from '../site/PageLink';
+import { useDocumentMeta, usePage } from '../site/PublicLayout';
 import { NotFound } from './NotFound';
 
 export function CareerPath() {
@@ -28,25 +29,19 @@ export function CareerPath() {
 
 function CareerPathPage({ pathKey }) {
     const { locale } = useLocale();
-    const { data, error } = useApi(`/${locale}/paths/${pathKey}`);
-
-    useDocumentMeta(data?.meta);
-
-    // Also wait out a stale payload from the previous path while the next loads.
-    if (! data || data.path.key !== pathKey) {
-        return <PageStatus error={error} />;
-    }
-
+    const data = usePage(`/${locale}/paths/${pathKey}`);
     const { person, paths, path } = data;
 
+    useDocumentMeta(data.meta);
+
     return (
-        <div className={`theme-${path.key}`}>
+        <div>
             <Nav person={person} paths={paths} current={path.key} />
 
-            <main id="main">
+            <main id="main" className="frame">
                 <Intro data={data} />
                 <Services services={path.services} />
-                <Flow flow={path.flow} />
+                <Flow flow={path.flow} pathKey={path.key} />
                 <HowAndWhere data={data} />
                 {data.projects.length > 0 && <Work projects={data.projects} />}
                 <NextPath next={data.next} />
@@ -57,36 +52,32 @@ function CareerPathPage({ pathKey }) {
     );
 }
 
-const sectionTitle = 'text-[26px] font-semibold leading-[1.15] tracking-[-0.025em] lg:text-[32px]';
+const sectionTitle = 'macro mb-6 text-[clamp(2.25rem,5vw,4rem)]';
 
 function Intro({ data }) {
     const { locale, t } = useLocale();
     const { path, years, roles } = data;
 
     return (
-        <section className="mx-auto flex max-w-[1440px] flex-col gap-10 px-5 pb-20 pt-8 sm:px-10 lg:gap-16 lg:px-20 lg:pb-30 lg:pt-16">
-            <nav aria-label={t('Breadcrumb')} className="flex items-center gap-3 font-mono text-[13px] text-faint">
-                <Link to={`/${locale}`} className="flex items-center gap-2 py-3 text-muted transition-colors hover:text-ink">
-                    <Icon name="arrow-left" size={16} stroke={1.8} />
-                    {t('All paths')}
-                </Link>
-                <span aria-hidden="true">/</span>
-                <span className="text-ink" aria-current="page">
-                    {path.number} · {path.nav}
-                </span>
-            </nav>
-
-            <div className="grid gap-10 lg:grid-cols-12 lg:items-start lg:gap-x-6">
-                <div className="flex flex-col gap-6 lg:col-span-7 lg:gap-7">
-                    <span className="flex items-center gap-2 self-start rounded-full bg-path-soft px-3 py-1.5 font-mono text-xs font-medium tracking-[0.04em] text-path">
-                        <span className="size-1.5 rounded-full bg-path" aria-hidden="true" />
-                        {t('Path').toLocaleUpperCase()} {path.number}
+        <section className="cells border-t-0 lg:grid-cols-[1fr_400px]">
+            <div className="scanlines flex flex-col gap-8 px-5 pb-12 pt-6 sm:px-8 lg:px-10 lg:pb-14">
+                <nav aria-label={t('Breadcrumb')} className="label flex items-center gap-3">
+                    <PageLink to={`/${locale}`} className="press py-3 hover:text-ink">
+                        &lt;&lt; {t('All paths')}
+                    </PageLink>
+                    <span className="text-faint" aria-hidden="true">
+                        /
                     </span>
-                    <h1 className="text-[clamp(2.625rem,6vw,5rem)] font-semibold leading-none tracking-[-0.045em] text-balance">{path.title}</h1>
-                    <p className="max-w-[560px] text-lg leading-[1.55] text-muted sm:text-xl">{path.lead}</p>
-                </div>
+                    <span className="text-ink" aria-current="page">
+                        {path.number} / {path.nav}
+                    </span>
+                </nav>
+                <Macro as="h1" text={`${path.title}.`} fit max={120} />
+                <p className="max-w-[56ch] text-[15.5px] leading-[1.65] text-soft sm:text-[16.5px]">{path.lead}</p>
+            </div>
 
-                <dl className="flex flex-col gap-5 rounded-[20px] border border-line bg-surface p-6 sm:p-8 lg:col-span-4 lg:col-start-9">
+            <div className="flex flex-col">
+                <dl className="grid gap-px bg-line">
                     {years && (
                         <>
                             <Fact label={t('Years')} value={years} />
@@ -96,13 +87,11 @@ function Intro({ data }) {
                     {path.facts.map((fact) => (
                         <Fact key={fact.label} label={fact.label} value={fact.value} />
                     ))}
-                    <div className="border-t border-line pt-5">
-                        <dt className="sr-only">{t('Stack')}</dt>
-                        <dd>
-                            <TechChips stack={path.stack} />
-                        </dd>
-                    </div>
                 </dl>
+                <div className="border-t border-line px-6 py-6">
+                    <p className="label sr-only">{t('Stack')}</p>
+                    <TechChips stack={path.stack} />
+                </div>
             </div>
         </section>
     );
@@ -110,9 +99,9 @@ function Intro({ data }) {
 
 function Fact({ label, value }) {
     return (
-        <div className="flex justify-between gap-4">
-            <dt className="font-mono text-[13px] text-faint">{label}</dt>
-            <dd className="text-right text-[15px] font-semibold">{value}</dd>
+        <div className="flex items-baseline justify-between gap-4 bg-base px-6 py-4">
+            <dt className="label">{label}</dt>
+            <dd className="text-right text-[14px] font-bold">{value}</dd>
         </div>
     );
 }
@@ -121,18 +110,13 @@ function Services({ services }) {
     const { t } = useLocale();
 
     return (
-        <section className="mx-auto flex max-w-[1440px] flex-col gap-8 px-5 pb-20 sm:px-10 lg:px-20 lg:pb-30">
+        <section className="mt-24">
             <h2 className={sectionTitle}>{t('What I do')}</h2>
-            <div className="grid gap-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+            <div className="cells sm:grid-cols-2 lg:grid-cols-4">
                 {services.map((service, index) => (
-                    <Reveal
-                        key={service.title}
-                        index={index}
-                        className={`flex flex-col gap-2.5 pt-6 ${index === 0 ? 'border-t-2 border-path' : 'border-t border-line-strong'}`}
-                    >
-                        <span className="font-mono text-xs text-path">{String(index + 1).padStart(2, '0')}</span>
-                        <h3 className="text-xl font-semibold tracking-[-0.015em]">{service.title}</h3>
-                        <p className="text-[15px] leading-[1.55] text-muted">{service.body}</p>
+                    <Reveal key={service.title} index={index} className="flex flex-col gap-3 px-6 py-7">
+                        <h3 className="text-[15px] font-bold uppercase tracking-[0.04em]">{service.title}</h3>
+                        <p className="text-[14px] leading-[1.6] text-soft">{service.body}</p>
                     </Reveal>
                 ))}
             </div>
@@ -140,84 +124,71 @@ function Services({ services }) {
     );
 }
 
-function Flow({ flow }) {
-    const { dark, group } = flow;
+function Flow({ flow, pathKey }) {
+    const { group } = flow;
     const outside = group ? flow.nodes.slice(0, group.from) : flow.nodes;
     const inside = group ? flow.nodes.slice(group.from) : [];
 
     return (
-        <section className="mx-auto max-w-[1440px] px-5 pb-20 sm:px-10 lg:px-20 lg:pb-30">
-            <Reveal
-                className={`flex flex-col gap-8 rounded-3xl p-6 sm:p-10 lg:gap-10 lg:p-12 ${
-                    dark ? 'bg-invert text-invert-ink' : 'border border-line bg-surface'
-                }`}
-            >
-                <div className="flex flex-wrap items-end justify-between gap-2">
-                    <h2 className={sectionTitle}>{flow.title}</h2>
-                    <p className={`font-mono text-[13px] ${dark ? 'text-invert-muted' : 'text-faint'}`}>{flow.caption}</p>
+        <section className="mt-24">
+            <div className="cells lg:grid-cols-[300px_1fr]">
+                <div className="px-6 py-8 sm:px-7">
+                    <h2 className="macro text-[30px] leading-[0.95]">{flow.title}</h2>
+                    <p className="label mt-4">{flow.caption}</p>
                 </div>
 
-                <ol className="flex flex-col items-stretch gap-3 lg:flex-row lg:items-center lg:gap-4">
-                    {outside.map((node, index) => (
-                        <Fragment key={node.name}>
-                            <FlowNode node={node} dark={dark} />
-                            {(index < outside.length - 1 || inside.length > 0) && <FlowArrow dark={dark} />}
-                        </Fragment>
-                    ))}
+                <div className="flex flex-col gap-8 px-6 py-8 sm:px-8">
+                    <ol className="flex flex-col items-start gap-3 lg:flex-row lg:items-center" translate="no">
+                        {outside.map((node, index) => (
+                            <Fragment key={node.name}>
+                                <FlowNode node={node} pathKey={pathKey} />
+                                {(index < outside.length - 1 || inside.length > 0) && <FlowArrow />}
+                            </Fragment>
+                        ))}
 
-                    {inside.length > 0 && (
-                        <li
-                            className={`flex flex-col gap-4 rounded-[20px] border border-dashed p-4 lg:flex-[3] lg:p-5 ${
-                                dark ? 'border-invert-muted/50' : 'border-line-strong'
-                            }`}
-                        >
-                            <span className={`font-mono text-xs ${dark ? 'text-invert-muted' : 'text-faint'}`}>{group.label}</span>
-                            <ol className="flex flex-col items-stretch gap-3 lg:flex-row lg:items-center lg:gap-4">
-                                {inside.map((node, index) => (
-                                    <Fragment key={node.name}>
-                                        <FlowNode node={node} dark={dark} />
-                                        {index < inside.length - 1 && <FlowArrow dark={dark} />}
-                                    </Fragment>
-                                ))}
-                            </ol>
-                        </li>
-                    )}
-                </ol>
+                        {inside.length > 0 && (
+                            <li className="flex flex-col gap-3 border border-dashed border-line-strong p-4">
+                                <span className="label">{group.label}</span>
+                                <ol className="flex flex-col items-start gap-3 lg:flex-row lg:items-center">
+                                    {inside.map((node, index) => (
+                                        <Fragment key={node.name}>
+                                            <FlowNode node={node} pathKey={pathKey} />
+                                            {index < inside.length - 1 && <FlowArrow />}
+                                        </Fragment>
+                                    ))}
+                                </ol>
+                            </li>
+                        )}
+                    </ol>
 
-                <div className={`flex flex-wrap items-center gap-2 text-[15px] ${dark ? 'text-invert-soft' : 'text-muted'}`}>
-                    {flow.tags.map((tag) => (
-                        <span
-                            key={tag}
-                            className={`rounded-full px-2.5 py-1.5 font-mono text-xs font-medium ${
-                                dark ? 'border border-invert-line text-invert-ink' : 'bg-path-soft text-path'
-                            }`}
-                        >
-                            {tag}
-                        </span>
-                    ))}
-                    <span className="sm:ml-2">{flow.note}</span>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[14px] text-soft">
+                        {flow.tags.map((tag) => (
+                            <span key={tag} className="border border-line-strong px-2.5 py-1.5 text-[12px] uppercase tracking-[0.06em] text-ink">
+                                {tag}
+                            </span>
+                        ))}
+                        <span className="sm:ml-2">{flow.note}</span>
+                    </div>
                 </div>
-            </Reveal>
+            </div>
         </section>
     );
 }
 
-function FlowNode({ node, dark }) {
-    const box = node.focus ? 'border-path bg-path text-on-path' : dark ? 'border-invert-line bg-invert-raised' : 'border-line bg-base';
-    const layer = node.focus ? 'text-on-path' : dark ? 'text-invert-muted' : 'text-faint';
-
+function FlowNode({ node, pathKey }) {
     return (
-        <li className={`flex flex-col gap-2 rounded-2xl border p-5 lg:flex-1 lg:p-6 ${box}`}>
-            <span className={`font-mono text-[11px] tracking-[0.08em] ${layer}`}>{node.layer.toLocaleUpperCase()}</span>
-            <span className="text-lg font-semibold tracking-[-0.015em] lg:text-xl">{node.name}</span>
+        <li className="flex flex-col gap-1.5">
+            <span className="label">{node.layer}</span>
+            <FlowBox node={node} pathKey={pathKey} />
         </li>
     );
 }
 
-function FlowArrow({ dark }) {
+function FlowArrow() {
     return (
-        <li aria-hidden="true" className={`flex justify-center ${dark ? 'text-invert-muted' : 'text-faint'}`}>
-            <Icon name="arrow-right" size={26} stroke={1.6} className="rotate-90 lg:rotate-0" />
+        <li aria-hidden="true" className="text-[13px] text-signal lg:pt-5">
+            <span className="lg:hidden">|</span>
+            <span className="hidden lg:inline">---&gt;</span>
         </li>
     );
 }
@@ -227,29 +198,31 @@ function HowAndWhere({ data }) {
     const { path, roles } = data;
 
     return (
-        <section className="mx-auto grid max-w-[1440px] gap-12 px-5 pb-20 sm:px-10 lg:grid-cols-12 lg:gap-x-6 lg:px-20 lg:pb-30">
-            <div className="flex flex-col gap-5 lg:col-span-5 lg:pr-8">
-                <p className="font-mono text-xs tracking-[0.06em] text-faint">{t('How I work').toLocaleUpperCase()}</p>
-                <blockquote className="text-[26px] font-medium leading-[1.25] tracking-[-0.02em] text-balance lg:text-[30px]">
-                    “{path.quote}”
-                </blockquote>
-                <p className="text-[16px] leading-[1.6] text-muted">{path.quote_note}</p>
-            </div>
+        <section className="mt-24">
+            <div className="cells lg:grid-cols-[5fr_7fr]">
+                <div className="flex flex-col gap-5 px-6 py-9 sm:px-8">
+                    <h2 className="label">{t('How I work')}</h2>
+                    <blockquote className="font-display text-[24px] font-bold leading-[1.2] tracking-[-0.02em] text-balance sm:text-[28px]">
+                        “{path.quote}”
+                    </blockquote>
+                    <p className="text-[14.5px] leading-[1.65] text-muted">{path.quote_note}</p>
+                </div>
 
-            <div className="flex flex-col lg:col-span-6 lg:col-start-7">
-                <h2 className="pb-4 font-mono text-xs font-normal tracking-[0.06em] text-faint">{t('Where').toLocaleUpperCase()}</h2>
-                <ol className="border-b border-line">
-                    {roles.map((row) => (
-                        <TimelineRow key={row.id} when={row.range} title={row.company}>
-                            <span className="text-ink">{row.role}.</span> {row.blurb}
-                        </TimelineRow>
-                    ))}
-                    {path.extras.map((extra) => (
-                        <TimelineRow key={extra.title} when={extra.when} title={extra.title}>
-                            {extra.body}
-                        </TimelineRow>
-                    ))}
-                </ol>
+                <div className="flex flex-col">
+                    <h2 className="label border-b border-line px-6 py-4 sm:px-8">{t('Where')}</h2>
+                    <ol className="grid gap-px bg-line">
+                        {roles.map((row) => (
+                            <TimelineRow key={row.id} when={row.range} title={row.company}>
+                                <span className="text-ink">{row.role}.</span> {row.blurb}
+                            </TimelineRow>
+                        ))}
+                        {path.extras.map((extra) => (
+                            <TimelineRow key={extra.title} when={extra.when} title={extra.title}>
+                                {extra.body}
+                            </TimelineRow>
+                        ))}
+                    </ol>
+                </div>
             </div>
         </section>
     );
@@ -257,11 +230,11 @@ function HowAndWhere({ data }) {
 
 function TimelineRow({ when, title, children }) {
     return (
-        <li className="grid gap-x-6 gap-y-1.5 border-t border-line py-6 sm:grid-cols-[150px_minmax(0,1fr)]">
-            <span className="font-mono text-[13px] text-faint">{when}</span>
+        <li className="grid gap-x-6 gap-y-1.5 bg-base px-6 py-6 sm:grid-cols-[140px_minmax(0,1fr)] sm:px-8">
+            <span className="text-[13px] text-muted">{when}</span>
             <div className="flex flex-col gap-1.5">
-                <span className="text-lg font-semibold tracking-[-0.01em]">{title}</span>
-                <span className="text-[15px] leading-[1.5] text-muted">{children}</span>
+                <span className="text-[15px] font-bold uppercase tracking-[0.03em]">{title}</span>
+                <span className="text-[14px] leading-[1.6] text-soft">{children}</span>
             </div>
         </li>
     );
@@ -271,40 +244,15 @@ function Work({ projects }) {
     const { t } = useLocale();
 
     return (
-        <section id="work" className="mx-auto flex max-w-[1440px] flex-col gap-8 px-5 pb-20 sm:px-10 lg:px-20 lg:pb-30">
+        <section id="work" className="mt-24">
             <h2 className={sectionTitle}>{t('Work')}</h2>
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="cells md:grid-cols-2">
                 {projects.map((project, index) => (
-                    <Reveal as="article" key={project.id} index={index} className="flex flex-col gap-3 rounded-[20px] border border-line bg-surface p-6 sm:p-8">
-                        {project.year && <span className="font-mono text-xs text-faint">{project.year}</span>}
-                        <h3 className="text-[22px] font-semibold tracking-[-0.015em]">{project.title}</h3>
-                        {project.summary && <p className="text-[15px] leading-[1.55] text-muted">{project.summary}</p>}
-                        {project.tech_stack.length > 0 && <TechChips stack={project.tech_stack} className="mt-1 flex flex-wrap gap-2" />}
-                        {(project.repo_url || project.live_url) && (
-                            <div className="mt-auto flex flex-wrap gap-x-5 pt-3 text-[15px]">
-                                {project.repo_url && (
-                                    <a
-                                        href={project.repo_url}
-                                        rel="noopener noreferrer"
-                                        target="_blank"
-                                        className="py-2 text-muted underline underline-offset-4 transition-colors hover:text-path"
-                                    >
-                                        {t('Repository')}
-                                    </a>
-                                )}
-                                {project.live_url && (
-                                    <a
-                                        href={project.live_url}
-                                        rel="noopener noreferrer"
-                                        target="_blank"
-                                        className="flex items-center gap-1.5 py-2 text-muted underline underline-offset-4 transition-colors hover:text-path"
-                                    >
-                                        {t('Live')}
-                                        <Icon name="arrow-up-right" size={14} stroke={1.8} />
-                                    </a>
-                                )}
-                            </div>
-                        )}
+                    <Reveal as="article" key={project.id} index={index} className="flex flex-col gap-3 px-6 py-8 sm:px-8">
+                        {project.year && <p className="label">{project.year}</p>}
+                        <h3 className="text-[19px] font-bold uppercase tracking-[0.02em]">{project.title}</h3>
+                        {project.summary && <p className="text-[14.5px] leading-[1.65] text-soft">{project.summary}</p>}
+                        <ProjectFooter project={project} />
                     </Reveal>
                 ))}
             </div>
@@ -316,18 +264,16 @@ function NextPath({ next }) {
     const { locale, t } = useLocale();
 
     return (
-        <Link to={`/${locale}/${next.key}`} className={`theme-${next.key} group block border-t border-line`}>
-            <span className="mx-auto flex max-w-[1440px] items-center justify-between gap-6 px-5 py-14 sm:px-10 lg:px-20 lg:py-18">
-                <span className="flex flex-col gap-3">
-                    <span className="font-mono text-[13px] text-faint">
-                        {t('Next path')} · {next.number}
-                    </span>
-                    <span className="text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.04em] text-balance">{next.title}</span>
+        <PageLink to={`/${locale}/${next.key}`} className="cells group mt-24 grid-cols-[1fr_auto]">
+            <span className="cell-link flex flex-col gap-4 px-6 py-9 sm:px-9">
+                <span className="label">
+                    {t('Next path')} / {next.number}
                 </span>
-                <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-path text-on-path transition-transform group-hover:translate-x-1 lg:size-22">
-                    <Icon name="arrow-right" size={28} stroke={1.8} />
-                </span>
+                <span className="macro text-[clamp(1.75rem,4.5vw,3.75rem)] leading-[0.95]">{next.title}</span>
             </span>
-        </Link>
+            <span className="flex w-20 items-center justify-center bg-signal text-[18px] font-bold text-on-signal transition-colors group-hover:bg-ink sm:w-32" aria-hidden="true">
+                &gt;&gt;&gt;
+            </span>
+        </PageLink>
     );
 }

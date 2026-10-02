@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import { bunny } from 'laravel-vite-plugin/fonts';
+import { bunny, local } from 'laravel-vite-plugin/fonts';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -10,14 +10,16 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.jsx'],
             refresh: true,
             fonts: [
-                // One family for everything readable: 600 for headings,
-                // 400/500 for body and UI.
-                bunny('Schibsted Grotesk', {
-                    weights: [400, 500, 600],
+                // Display type. Self-hosted variable file (OFL, see
+                // resources/fonts/archivo/OFL.txt) because the remote
+                // providers drop the width axis the expanded headings need.
+                local('Archivo', {
+                    variants: [{ src: 'resources/fonts/archivo/archivo-latin-wdth-normal.woff2', weight: '100 900' }],
+                    optimizedFallbacks: false,
                 }),
-                // Dates, labels and stack tokens only.
+                // Everything else on the public site: body, labels, data.
                 bunny('JetBrains Mono', {
-                    weights: [400, 500],
+                    weights: [400, 500, 700],
                 }),
             ],
         }),

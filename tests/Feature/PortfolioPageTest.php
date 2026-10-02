@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Project;
+use App\Models\User;
 use Database\Seeders\CvSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -81,5 +83,55 @@ class PortfolioPageTest extends TestCase
 
         $this->assertSame(['sap'], $items['MAVI de Occidente']['paths']);
         $this->assertSame(['sap', 'web', 'infra'], $items['Global Asiática']['paths']);
+    }
+
+    public function test_ledger_rows_carry_month_stamps(): void
+    {
+        $items = collect($this->getJson('/api/en/portfolio')->json('data.experience.items'))->keyBy('company');
+
+        $this->assertSame('2026-03', $items['MAVI de Occidente']['from']);
+        $this->assertSame('2026-08', $items['MAVI de Occidente']['to']);
+        $this->assertSame('2024-07', $items['Global Asiática']['from']);
+    }
+
+    public function test_each_path_is_a_pipeline_with_one_focus_node(): void
+    {
+        $pipelines = collect($this->getJson('/api/es/portfolio')->json('data.pipelines'))->keyBy('key');
+
+        $this->assertSame(['sap', 'web', 'infra'], $pipelines->keys()->all());
+        $this->assertSame('SAP y empresa', $pipelines['sap']['title']);
+
+        foreach ($pipelines as $pipeline) {
+            $this->assertCount(1, array_filter(array_column($pipeline['nodes'], 'focus')));
+        }
+    }
+
+    public function test_the_home_payload_has_skill_groups_and_only_published_projects(): void
+    {
+        $user = User::firstOrFail();
+
+        Project::create([
+            'user_id' => $user->id,
+            'slug' => 'erp',
+            'title' => ['en' => 'Multi-company ERP', 'es' => 'ERP multiempresa'],
+            'tech_stack' => ['PHP'],
+            'is_published' => true,
+            'sort_order' => 1,
+        ]);
+
+        Project::create([
+            'user_id' => $user->id,
+            'slug' => 'draft',
+            'title' => ['en' => 'Unfinished draft', 'es' => 'Borrador sin terminar'],
+            'tech_stack' => ['PHP'],
+            'is_published' => false,
+            'sort_order' => 2,
+        ]);
+
+        $response = $this->getJson('/api/en/portfolio')->assertJsonPath('data.projects.*.title', ['Multi-company ERP']);
+
+        $groups = $response->json('data.skills');
+        $this->assertNotEmpty($groups);
+        $this->assertContains('Laravel', $groups[0]['skills']);
     }
 }

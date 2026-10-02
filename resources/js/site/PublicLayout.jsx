@@ -1,11 +1,16 @@
 /*
 | Wraps every /{locale}/... page: validates the locale segment, provides it
-| to the tree, and keeps <html lang> and the scroll position in step with
-| client-side navigation.
+| to the tree, keeps <html lang> and the scroll position in step with
+| client-side navigation, and animates the change of page.
+|
+| Pages read their data with usePage(), which suspends. React Router
+| navigates inside a transition, so the page on screen stays until the next
+| one has its data, and <ViewTransition> then animates between the two.
 */
 
-import { useEffect } from 'react';
+import { Component, Suspense, use, useEffect, useLayoutEffect, useMemo, ViewTransition } from 'react';
 import { Outlet, useLocation, useParams } from 'react-router';
+import { resource } from '../lib/cache';
 import { isLocale } from '../lib/config';
 import { LocaleProvider, translate } from '../lib/i18n';
 import { NotFound } from '../pages/NotFound';
@@ -18,9 +23,11 @@ export function PublicLayout() {
         document.documentElement.lang = locale;
     }, [locale]);
 
-    useEffect(() => {
+    // Layout effect: the view transition snapshots the new page right after
+    // commit, and it must already be scrolled to the top by then.
+    useLayoutEffect(() => {
         if (! hash) {
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: 0, behavior: 'instant' });
         }
     }, [pathname, hash]);
 
@@ -30,15 +37,32 @@ export function PublicLayout() {
 
     return (
         <LocaleProvider locale={locale}>
-            <a
-                href="#main"
-                className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-surface"
-            >
-                {translate(locale, 'Skip to content')}
-            </a>
-            <Outlet />
+            {/* `.site` scopes the Ledger palette and type; the admin has its own. */}
+            <div className="site min-h-screen">
+                <a
+                    href="#main"
+                    className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-signal focus:px-4 focus:py-3 focus:text-[13px] focus:font-bold focus:uppercase focus:tracking-[0.1em] focus:text-on-signal"
+                >
+                    {translate(locale, 'Skip to content')}
+                </a>
+                <ViewTransition default="page">
+                    <PageErrors resetKey={pathname}>
+                        <Suspense fallback={<PageStatus />}>
+                            <Outlet />
+                        </Suspense>
+                    </PageErrors>
+                </ViewTransition>
+            </div>
         </LocaleProvider>
     );
+}
+
+/**
+ * A public page's API payload. Suspends until it is loaded; a failed request
+ * is thrown to <PageErrors>.
+ */
+export function usePage(url) {
+    return use(useMemo(() => resource(url), [url]));
 }
 
 /**
@@ -62,10 +86,32 @@ export function PageStatus({ error }) {
     return (
         <div className="flex min-h-screen items-center justify-center px-5" aria-busy={! error}>
             {error && (
-                <p className="font-mono text-[13px] text-faint" role="alert">
+                <p className="label" role="alert">
                     {error.response?.status ?? ''} {error.message}
                 </p>
             )}
         </div>
     );
+}
+
+/**
+ * Shows a failed page load instead of unmounting the app; navigating away
+ * clears it.
+ */
+class PageErrors extends Component {
+    state = { error: null };
+
+    static getDerivedStateFromError(error) {
+        return { error };
+    }
+
+    componentDidUpdate(previous) {
+        if (this.state.error && previous.resetKey !== this.props.resetKey) {
+            this.setState({ error: null });
+        }
+    }
+
+    render() {
+        return this.state.error ? <PageStatus error={this.state.error} /> : this.props.children;
+    }
 }

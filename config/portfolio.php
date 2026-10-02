@@ -24,6 +24,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Public content cache
+    |--------------------------------------------------------------------------
+    |
+    | Seconds the public pages' JSON is kept (see App\Support\PublicContent).
+    | Admin writes clear it at once; the TTL only bounds staleness from things
+    | the admin does not touch, like a deploy that changes this file. 0 turns
+    | the cache off.
+    |
+    */
+    'cache_ttl' => (int) env('PORTFOLIO_CACHE_TTL', 3600),
+
+    /*
+    |--------------------------------------------------------------------------
     | Career paths
     |--------------------------------------------------------------------------
     |
@@ -124,7 +137,6 @@ return [
                 'nodes' => [['Client', 'Browser'], ['Proxy', 'Nginx'], ['App', 'PHP-FPM · Laravel'], ['Data', 'PostgreSQL']],
                 'focus' => 2,
                 'group' => ['label' => 'docker compose', 'from' => 1],
-                'dark' => true,
                 'tags' => ['cron', 'backups', 'deploys'],
                 'note' => 'Scheduled jobs, backups and deployments around the stack.',
             ],

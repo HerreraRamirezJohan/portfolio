@@ -1,8 +1,9 @@
 /*
-| The dark contact band that closes every page. `compact` shrinks it to a
-| footer on path pages.
+| The contact block and footer that close every page. `compact` drops the
+| macro heading on path pages and keeps the action and the footer.
 */
 
+import { Macro } from '../components/Macro';
 import { Reveal } from '../components/Reveal';
 import { useLocale } from '../lib/i18n';
 
@@ -14,76 +15,92 @@ function socials(person, t) {
     ].filter(([, url]) => url);
 }
 
-function SocialLink({ label, href, external = true }) {
+/**
+ * Attribution for the PHP logo (CC BY-SA 4.0) and Tux, and the trademark
+ * lines SAP and the Linux Foundation ask for.
+ */
+function Credits() {
+    const { t } = useLocale();
+
     return (
-        <a
-            href={href}
-            {...(external ? { rel: 'noopener noreferrer', target: '_blank' } : {})}
-            className="px-3.5 py-3 text-[15px] text-invert-soft transition-colors hover:text-invert-ink"
-        >
-            {label}
+        <p className="max-w-[760px] py-5 text-[11px] leading-[1.6] text-muted">
+            {t(
+                'PHP logo by Colin Viebrock, CC BY-SA 4.0. Tux by Larry Ewing and The GIMP. SAP and ABAP are trademarks or registered trademarks of SAP SE or its affiliates in Germany and in other countries. Linux is the registered trademark of Linus Torvalds.',
+            )}
+        </p>
+    );
+}
+
+export function EmailButton({ email }) {
+    const { t } = useLocale();
+
+    return (
+        <a href={`mailto:${email}`} className="btn-signal press">
+            [ {t('Email me')} ]
+            <span aria-hidden="true" className="tracking-normal">
+                &gt;&gt;&gt;
+            </span>
         </a>
+    );
+}
+
+function Footer({ person }) {
+    const { t } = useLocale();
+    const links = socials(person, t);
+
+    return (
+        <div className="cells label mt-16 grid-cols-1 sm:grid-cols-[1fr_auto]">
+            <p className="px-4 py-4">
+                © {new Date().getFullYear()} {person.name}
+            </p>
+            <div className="flex flex-wrap gap-px bg-line">
+                {links.map(([label, url]) => (
+                    <a key={label} href={url} rel="noopener noreferrer" target="_blank" className="press bg-base px-4 py-4 hover:text-ink">
+                        {label}
+                    </a>
+                ))}
+                {person.phone && (
+                    <a href={person.phone_href} className="press bg-base px-4 py-4 hover:text-ink">
+                        {person.phone}
+                    </a>
+                )}
+            </div>
+        </div>
     );
 }
 
 export function Contact({ person, compact = false }) {
     const { t } = useLocale();
-    const links = socials(person, t);
 
-    if (compact) {
-        return (
-            <footer id="contact" className="bg-invert text-invert-ink">
-                <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-5 py-14 sm:px-10 md:flex-row md:items-center md:justify-between lg:px-20">
-                    <div className="flex flex-col gap-3">
-                        <p className="text-2xl font-semibold tracking-[-0.02em] sm:text-[28px]">{t('Have a process that needs a system?')}</p>
-                        <a
-                            href={`mailto:${person.email}`}
-                            className="self-start text-lg text-invert-soft underline decoration-1 underline-offset-[6px] transition-colors hover:text-invert-ink"
-                        >
+    return (
+        <footer id="contact" className="frame pb-6">
+            {compact ? (
+                <div className="cells mt-24 grid-cols-1 md:grid-cols-[1fr_auto]">
+                    <div className="flex flex-col gap-3 px-6 py-8">
+                        <p className="macro text-[28px] sm:text-[36px]">{t('Send me the spec.')}</p>
+                        <p className="text-[13.5px] text-muted">{person.email}</p>
+                    </div>
+                    <div className="flex items-center px-6 py-8">
+                        <EmailButton email={person.email} />
+                    </div>
+                </div>
+            ) : (
+                <Reveal className="mt-24 grid gap-10 border-t-2 border-signal pt-12 lg:grid-cols-[1fr_420px] lg:items-end">
+                    <Macro text={t('Send me the spec.')} fit max={150} />
+                    <div className="flex flex-col items-start gap-5">
+                        <p className="text-[15px] leading-[1.6] text-soft">
+                            {t('I read every functional spec end to end before estimating. Yours included.')}
+                        </p>
+                        <EmailButton email={person.email} />
+                        <a href={`mailto:${person.email}`} className="break-all text-[13.5px] text-muted hover:text-ink">
                             {person.email}
                         </a>
                     </div>
-
-                    <div className="-ml-3.5 flex flex-wrap md:ml-0">
-                        {links.map(([label, url]) => (
-                            <SocialLink key={label} label={label} href={url} />
-                        ))}
-                    </div>
-                </div>
-            </footer>
-        );
-    }
-
-    return (
-        <footer id="contact" className="bg-invert text-invert-ink">
-            <div className="mx-auto flex max-w-[1440px] flex-col gap-16 px-5 pb-10 pt-20 sm:px-10 lg:px-20 lg:pt-32">
-                <Reveal className="flex flex-col gap-6 lg:gap-7">
-                    <p className="font-mono text-xs tracking-[0.06em] text-invert-muted">{t('Contact').toLocaleUpperCase()}</p>
-                    <h2 className="max-w-[900px] text-[clamp(2.25rem,5vw,4rem)] font-semibold leading-[1.04] tracking-[-0.04em] text-balance">
-                        {t('Have a process that needs a system?')}
-                    </h2>
-                    <a
-                        href={`mailto:${person.email}`}
-                        className="self-start break-all text-lg tracking-[-0.01em] underline decoration-1 underline-offset-8 transition-colors hover:text-invert-soft sm:text-[28px]"
-                    >
-                        {person.email}
-                    </a>
                 </Reveal>
+            )}
 
-                <div className="flex flex-col gap-4 border-t border-invert-line pt-6 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="font-mono text-[13px] text-invert-muted">
-                        © {new Date().getFullYear()} {person.short_name}
-                        {person.location && ` · ${person.location}`}
-                    </p>
-
-                    <div className="-ml-3.5 flex flex-wrap sm:ml-0">
-                        {links.map(([label, url]) => (
-                            <SocialLink key={label} label={label} href={url} />
-                        ))}
-                        {person.phone && <SocialLink label={person.phone} href={person.phone_href} external={false} />}
-                    </div>
-                </div>
-            </div>
+            <Footer person={person} />
+            <Credits />
         </footer>
     );
 }

@@ -6,6 +6,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{-- Browser chrome colour: the public site's --c-base. --}}
+    <meta name="theme-color" content="#0e0e0d">
     <title>{{ $title ?? config('app.name') }}</title>
 
     @if (filled($description ?? null))
@@ -22,25 +24,12 @@
         <link rel="alternate" hreflang="{{ $locale }}" href="{{ $url }}">
     @endforeach
 
-    {{-- Runs before first paint: sets the theme class so there is no flash of
-         the wrong palette. Kept inline and tiny on purpose. --}}
+    {{-- Admin only (the public site is dark by design): follow the OS theme,
+         set before first paint so there is no flash. --}}
     <script>
-        (function () {
-            var el = document.documentElement;
-            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-            try {
-                var saved = localStorage.getItem('theme');
-                if (saved ? saved === 'dark' : prefersDark) {
-                    el.classList.add('dark');
-                }
-            } catch (e) {
-                // Storage blocked -- fall back to the OS preference only.
-                if (prefersDark) {
-                    el.classList.add('dark');
-                }
-            }
-        })();
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
     </script>
 
     {{-- Emits the @font-face rules and the --font-* custom properties that
@@ -52,6 +41,12 @@
 </head>
 <body class="min-h-screen bg-base font-sans text-ink antialiased">
     <div id="app" data-config='@json($config)'></div>
+
+    {{-- This page's own API payload, so React renders without a first request.
+         PublicContent hex-escapes <, >, & and quotes, so it cannot close the tag. --}}
+    @isset($bootstrap)
+        <script type="application/json" id="bootstrap" data-url="{{ $bootstrap['url'] }}">{!! $bootstrap['json'] !!}</script>
+    @endisset
 
     <noscript>
         <p class="p-8">{{ __('This site needs JavaScript to display its content.') }}</p>

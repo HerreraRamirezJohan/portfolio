@@ -9,10 +9,12 @@ use App\Http\Controllers\Api\Admin\ProjectController;
 use App\Http\Controllers\Api\Admin\SkillGroupController;
 use App\Http\Controllers\Api\PortfolioController;
 use App\Http\Controllers\Api\SessionController;
+use App\Http\Middleware\FlushPublicContent;
 use App\Http\Middleware\SetLocale;
 use App\Support\CareerPaths;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,11 +25,16 @@ use Illuminate\Support\Str;
 | the prefix. There is deliberately no registration endpoint: this is a
 | single-user site and the one account comes from CvSeeder.
 |
+| These answers are the same for everyone, so they skip Sanctum's session
+| middleware (no cookie, no session write) and carry an ETag: a repeat
+| request costs a 304 with no body.
+|
 */
 
 Route::prefix('{locale}')
     ->whereIn('locale', config('portfolio.locales'))
-    ->middleware(SetLocale::class)
+    ->middleware([SetLocale::class, 'cache.headers:public;max_age=0;must_revalidate;etag'])
+    ->withoutMiddleware(EnsureFrontendRequestsAreStateful::class)
     ->group(function () {
         Route::get('portfolio', [PortfolioController::class, 'home'])->name('api.portfolio');
 
@@ -59,7 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::prefix('admin')->name('api.admin.')->group(function () {
+    Route::prefix('admin')->name('api.admin.')->middleware(FlushPublicContent::class)->group(function () {
         Route::get('dashboard', DashboardController::class)->name('dashboard');
 
         Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');

@@ -29,24 +29,24 @@ class CareerPathsTest extends TestCase
             $this->experience('2026-03-01', '2026-08-01'),
         ]);
 
-        $this->assertSame('2024 — 2026', CareerPaths::years($rows));
+        $this->assertSame('2024 - 2026', CareerPaths::years($rows));
         $this->assertNull(CareerPaths::years(collect()));
     }
 
     public function test_years_end_in_present_for_a_current_role(): void
     {
         $this->app->setLocale('en');
-        $this->assertSame('2025 — Present', CareerPaths::years(collect([$this->experience('2025-01-01', null, true)])));
+        $this->assertSame('2025 - Present', CareerPaths::years(collect([$this->experience('2025-01-01', null, true)])));
     }
 
     public function test_a_range_within_one_year_shows_months(): void
     {
         $this->app->setLocale('en');
-        $this->assertSame('Mar — Aug 2026', $this->experience('2026-03-01', '2026-08-01')->compactRange());
+        $this->assertSame('Mar - Aug 2026', $this->experience('2026-03-01', '2026-08-01')->compactRange());
 
         $this->app->setLocale('es');
-        $this->assertSame('Mar — Ago 2026', $this->experience('2026-03-01', '2026-08-01')->compactRange());
-        $this->assertSame('2024 — 2026', $this->experience('2024-07-01', '2026-03-01')->compactRange());
+        $this->assertSame('Mar - Ago 2026', $this->experience('2026-03-01', '2026-08-01')->compactRange());
+        $this->assertSame('2024 - 2026', $this->experience('2024-07-01', '2026-03-01')->compactRange());
     }
 
     public function test_short_name_keeps_the_first_name_and_paternal_surname(): void

@@ -1,15 +1,19 @@
 /*
 | Stack chips. The API sends {name, icon}; `icon` comes from
 | App\Support\TechIcon, and a null icon renders a plain text chip by design.
+|
+| PHP and Linux use their real marks (credited in site/Contact.jsx): the PHP
+| logo by Colin Viebrock, CC BY-SA 4.0, from php.net, and Tux by Larry Ewing.
+| Everything else is a drawn line glyph. SAP-family names share a neutral
+| glyph: SAP does not license its logo to third parties.
 */
 
+import phpLogo from '../../img/logos/php.svg';
+import tuxLogo from '../../img/logos/tux.webp';
+
+const logos = { php: phpLogo, linux: tuxLogo };
+
 const marks = {
-    php: (
-        <>
-            <ellipse cx="12" cy="12" rx="10.5" ry="6" />
-            <path d="M8.2 9.6 7 14.4M8.2 9.6h1.6a1.2 1.2 0 0 1 0 2.4H7.6M13.4 9.6 12.2 14.4M13.4 9.6h1.5a1.2 1.2 0 0 1 0 2.4h-2" />
-        </>
-    ),
     laravel: (
         <>
             <path d="M2 7.5 6.2 5l4.2 2.5-4.2 2.5L2 7.5Z" />
@@ -60,13 +64,6 @@ const marks = {
             <path d="M1.5 13.5c0 4 3 6.5 8 6.5 7 0 11.5-3.2 12.6-8 2.2.5 4-.4 4.9-1.7" />
         </>
     ),
-    linux: (
-        <>
-            <path d="M12 2.5c2.2 0 3.2 2 3.2 4.6 0 1.8 2.8 5.4 3.4 8 .5 2.3-.6 4.2-2.2 4.2-1.2 0-1.6-.8-2.4-.8h-4c-.8 0-1.2.8-2.4.8-1.6 0-2.7-1.9-2.2-4.2.6-2.6 3.4-6.2 3.4-8 0-2.6 1-4.6 3.2-4.6Z" />
-            <circle cx="10.4" cy="7.6" r=".9" fill="currentColor" stroke="none" />
-            <circle cx="13.6" cy="7.6" r=".9" fill="currentColor" stroke="none" />
-        </>
-    ),
     nginx: (
         <>
             <path d="M12 2.5 21 7.5v9L12 21.5 3 16.5v-9L12 2.5Z" />
@@ -109,7 +106,18 @@ const marks = {
     ),
 };
 
+/**
+ * A real brand mark at its own proportions, `size` pixels tall.
+ */
+export function TechLogo({ icon, size = 18 }) {
+    return <img src={logos[icon]} alt="" height={size} style={{ height: size, width: 'auto' }} className="shrink-0" />;
+}
+
 export function TechIcon({ icon, size = 18 }) {
+    if (logos[icon]) {
+        return <TechLogo icon={icon} size={size} />;
+    }
+
     if (! icon || ! marks[icon]) {
         return null;
     }
@@ -134,7 +142,7 @@ export function TechIcon({ icon, size = 18 }) {
 
 export function TechChip({ tech }) {
     return (
-        <span className="flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1.5 font-mono text-xs text-chip">
+        <span translate="no" className="flex items-center gap-1.5 border border-line-strong px-2.5 py-1.5 font-mono text-[12px] uppercase tracking-[0.06em] text-ink">
             <TechIcon icon={tech.icon} size={13} />
             {tech.name}
         </span>

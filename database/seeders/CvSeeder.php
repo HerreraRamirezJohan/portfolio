@@ -8,6 +8,7 @@ use App\Models\Project;
 use App\Models\SkillGroup;
 use App\Models\User;
 use App\Models\WorkExperience;
+use App\Support\PublicContent;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
@@ -40,6 +41,8 @@ class CvSeeder extends Seeder
         $this->seedSkillGroups($user, $cv['skill_groups']);
         $this->seedLanguages($user, $cv['languages']);
         $this->seedProjects($user, $cv['projects']);
+
+        PublicContent::flush();
     }
 
     /**

@@ -22,6 +22,9 @@ class WorkExperienceResource extends JsonResource
             'company' => $this->company,
             'role' => $this->role,
             'range' => $this->compactRange(),
+            // "2024-07" stamps for the home ledger; `to` is null while current.
+            'from' => $this->start_date->format('Y-m'),
+            'to' => $this->is_current || $this->end_date === null ? null : $this->end_date->format('Y-m'),
             'paths' => CareerPaths::forCompany($this->company),
         ];
     }

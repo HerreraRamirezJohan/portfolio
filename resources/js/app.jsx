@@ -4,17 +4,17 @@
 | routes/api.php; routes/web.php only serves this shell.
 */
 
-import { StrictMode } from 'react';
+import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
-import { AdminLayout } from './admin/AdminLayout';
-import { EducationManager, ExperienceManager, LanguageManager, ProjectManager, SkillGroupManager } from './admin/managers';
-import { Dashboard, Login, ProfileForm } from './admin/pages';
 import { config } from './lib/config';
 import { CareerPath } from './pages/CareerPath';
 import { NotFound } from './pages/NotFound';
 import { Portfolio } from './pages/Portfolio';
 import { PublicLayout } from './site/PublicLayout';
+
+// Public visitors never download the admin: it loads on the first /admin URL.
+const AdminRoutes = lazy(() => import('./admin/AdminRoutes'));
 
 function App() {
     return (
@@ -22,17 +22,14 @@ function App() {
             <Routes>
                 <Route index element={<Navigate to={`/${config.defaultLocale}`} replace />} />
 
-                <Route path="admin" element={<AdminLayout />}>
-                    <Route index element={<Dashboard />} />
-                    <Route path="login" element={<Login />} />
-                    <Route path="profile" element={<ProfileForm />} />
-                    <Route path="experience" element={<ExperienceManager />} />
-                    <Route path="education" element={<EducationManager />} />
-                    <Route path="skills" element={<SkillGroupManager />} />
-                    <Route path="languages" element={<LanguageManager />} />
-                    <Route path="projects" element={<ProjectManager />} />
-                    <Route path="*" element={<NotFound />} />
-                </Route>
+                <Route
+                    path="admin/*"
+                    element={
+                        <Suspense fallback={null}>
+                            <AdminRoutes />
+                        </Suspense>
+                    }
+                />
 
                 <Route path=":locale" element={<PublicLayout />}>
                     <Route index element={<Portfolio />} />

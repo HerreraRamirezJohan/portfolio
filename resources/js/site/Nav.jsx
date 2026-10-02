@@ -1,52 +1,56 @@
 /*
-| Shared public nav. `current` is the active path key, or null on the home page.
+| Shared public nav: three compartments of one ruled bar. `current` is the
+| active path key, or null on the home page.
 */
 
-import { useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router';
-import { Icon } from '../components/Icon';
-import { ThemeToggle } from '../components/ThemeToggle';
+import { useEffect, useRef, ViewTransition } from 'react';
+import { useLocation } from 'react-router';
 import { config } from '../lib/config';
 import { useLocale } from '../lib/i18n';
+import { PageLink } from './PageLink';
 
 export function Nav({ person, paths, current }) {
     const { locale, t } = useLocale();
 
+    // Named, so the bar holds still while the page underneath changes.
     return (
-        <header className="sticky top-0 z-50 border-b border-line bg-base/85 backdrop-blur-md">
-            <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-4 px-5 sm:px-10 lg:h-20 lg:px-20">
-                <Link to={`/${locale}`} className="flex items-center gap-2.5 text-[16px] font-semibold tracking-[-0.01em] sm:text-[17px]">
-                    <span className="size-2.5 rounded-full bg-ink" aria-hidden="true" />
-                    {person.short_name}
-                </Link>
-
-                <nav aria-label={t('Main')} className="hidden items-center gap-1 md:flex">
-                    {paths.map((path) => (
-                        <Link
-                            key={path.key}
-                            to={`/${locale}/${path.key}`}
-                            aria-current={current === path.key ? 'page' : undefined}
-                            className={`theme-${path.key} px-4 py-3 text-[15px] transition-colors ${
-                                current === path.key
-                                    ? 'font-semibold text-path underline decoration-2 underline-offset-[10px]'
-                                    : 'font-medium text-muted hover:text-ink'
-                            }`}
+        <ViewTransition name="site-nav">
+            <header className="sticky top-0 z-50 bg-base">
+                <div className="frame">
+                    <div className="cells grid-cols-[1fr_auto] border-t-0 md:grid-cols-[1.3fr_2fr_1fr]">
+                        <PageLink
+                            to={`/${locale}`}
+                            className="flex h-16 items-center px-5 text-[13px] font-bold uppercase tracking-[0.1em]"
                         >
-                            {path.nav}
-                        </Link>
-                    ))}
-                    <a href="#contact" className="px-4 py-3 text-[15px] font-medium text-muted transition-colors hover:text-ink">
-                        {t('Contact')}
-                    </a>
-                </nav>
+                            {person.short_name}
+                        </PageLink>
 
-                <div className="flex items-center gap-2 sm:gap-3">
-                    <LanguageSwitch />
-                    <ThemeToggle />
-                    <MobileMenu paths={paths} current={current} />
+                        <nav aria-label={t('Main')} className="hidden h-16 items-center gap-1 px-3 md:flex">
+                            {paths.map((path) => (
+                                <PageLink
+                                    key={path.key}
+                                    to={`/${locale}/${path.key}`}
+                                    aria-current={current === path.key ? 'page' : undefined}
+                                    className={`press px-3 py-3 text-[12.5px] uppercase tracking-[0.1em] ${
+                                        current === path.key ? 'font-bold text-ink' : 'text-muted hover:text-ink'
+                                    }`}
+                                >
+                                    {current === path.key ? `[ ${path.nav} ]` : path.nav}
+                                </PageLink>
+                            ))}
+                            <a href="#contact" className="press px-3 py-3 text-[12.5px] uppercase tracking-[0.1em] text-muted hover:text-ink">
+                                {t('Contact')}
+                            </a>
+                        </nav>
+
+                        <div className="flex h-16 items-center justify-end gap-2 pl-3 pr-2 sm:pr-3">
+                            <LanguageSwitch />
+                            <MobileMenu paths={paths} current={current} />
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </header>
+            </header>
+        </ViewTransition>
     );
 }
 
@@ -59,20 +63,24 @@ function LanguageSwitch() {
     const rest = pathname.split('/').slice(2).join('/');
 
     return (
-        <div className="flex rounded-full border border-line bg-surface p-[3px]">
-            {config.locales.map((code) => (
-                <Link
-                    key={code}
-                    to={`/${code}${rest ? `/${rest}` : ''}`}
-                    hrefLang={code}
-                    lang={code}
-                    aria-current={code === locale ? 'true' : undefined}
-                    className={`rounded-full px-3 py-2 font-mono text-xs font-medium transition-colors sm:px-3.5 sm:py-2.5 ${
-                        code === locale ? 'bg-ink text-surface' : 'text-muted hover:text-ink'
-                    }`}
-                >
-                    {code.toUpperCase()}
-                </Link>
+        <div className="flex items-center text-[12.5px] tracking-[0.1em]">
+            {config.locales.map((code, index) => (
+                <span key={code} className="flex items-center">
+                    {index > 0 && (
+                        <span className="text-faint" aria-hidden="true">
+                            /
+                        </span>
+                    )}
+                    <PageLink
+                        to={`/${code}${rest ? `/${rest}` : ''}`}
+                        hrefLang={code}
+                        lang={code}
+                        aria-current={code === locale ? 'true' : undefined}
+                        className={`press px-2 py-3 ${code === locale ? 'font-bold text-ink' : 'text-muted hover:text-ink'}`}
+                    >
+                        {code.toUpperCase()}
+                    </PageLink>
+                </span>
             ))}
         </div>
     );
@@ -106,28 +114,29 @@ function MobileMenu({ paths, current }) {
     }
 
     return (
-        <details ref={menu} onClick={closeOnLink} className="relative md:hidden">
-            <summary className="flex size-11 cursor-pointer list-none items-center justify-center rounded-full border border-line bg-surface text-ink">
-                <span className="sr-only">{t('Menu')}</span>
-                <Icon name="menu" />
+        <details ref={menu} onClick={closeOnLink} className="group relative md:hidden">
+            <summary className="press flex h-11 cursor-pointer list-none items-center border border-line-strong px-3 text-[12px] font-bold uppercase tracking-[0.1em]">
+                <span className="group-open:hidden">{t('Menu')}</span>
+                <span className="hidden group-open:inline" aria-hidden="true">
+                    [ x ]
+                </span>
             </summary>
 
-            <nav
-                aria-label={t('Main')}
-                className="absolute right-0 top-[calc(100%+0.75rem)] flex w-60 flex-col rounded-2xl border border-line bg-surface p-2 shadow-[0_12px_40px_rgb(0_0_0/0.08)]"
-            >
+            <nav aria-label={t('Main')} className="cells absolute right-0 top-[calc(100%+0.5rem)] w-64">
                 {paths.map((path) => (
-                    <Link
+                    <PageLink
                         key={path.key}
                         to={`/${locale}/${path.key}`}
                         aria-current={current === path.key ? 'page' : undefined}
-                        className={`theme-${path.key} flex items-center gap-3 rounded-xl px-3 py-3 text-[15px] font-medium hover:bg-base`}
+                        className="cell-link flex items-center justify-between px-4 py-4 text-[13px] uppercase tracking-[0.08em]"
                     >
-                        <span className="size-2 rounded-full bg-path" aria-hidden="true" />
                         {path.card_title}
-                    </Link>
+                        <span className={current === path.key ? 'text-signal' : 'text-faint'} aria-hidden="true">
+                            &gt;&gt;&gt;
+                        </span>
+                    </PageLink>
                 ))}
-                <a href="#contact" className="rounded-xl px-3 py-3 pl-8 text-[15px] font-medium hover:bg-base">
+                <a href="#contact" className="cell-link px-4 py-4 text-[13px] uppercase tracking-[0.08em]">
                     {t('Contact')}
                 </a>
             </nav>

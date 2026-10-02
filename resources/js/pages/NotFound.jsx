@@ -10,10 +10,12 @@ export function NotFound() {
     const locale = config.defaultLocale;
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center gap-4 px-5 text-center">
-            <p className="font-mono text-[13px] text-faint">404</p>
-            <Link to={`/${locale}`} className="text-[15px] font-medium underline underline-offset-4">
-                {translate(locale, 'Back to home')}
+        <main className="site flex min-h-screen flex-col items-start justify-center gap-6 px-6 sm:px-12">
+            <p className="macro text-[clamp(5rem,20vw,14rem)]">
+                404<span className="text-signal">.</span>
+            </p>
+            <Link to={`/${locale}`} className="btn-signal press">
+                &lt;&lt; {translate(locale, 'Back to home')}
             </Link>
         </main>
     );

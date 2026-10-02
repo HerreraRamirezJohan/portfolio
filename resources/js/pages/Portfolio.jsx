@@ -1,37 +1,46 @@
 /*
-| /{locale} -- hero, the three path cards, a compact experience list,
-| education/languages and contact. Data: GET /api/{locale}/portfolio.
+| /{locale} -- hero, pipelines (one per career path), the experience
+| ledger, education/languages, case files, stack index and contact.
+| Data: GET /api/{locale}/portfolio.
 */
 
-import { Link } from 'react-router';
-import { Icon } from '../components/Icon';
+import { Fragment, useEffect } from 'react';
+import { Macro } from '../components/Macro';
 import { Reveal } from '../components/Reveal';
-import { Trans, useLocale } from '../lib/i18n';
-import { useApi } from '../lib/useApi';
-import { Contact } from '../site/Contact';
+import { prefetch } from '../lib/cache';
+import { useLocale } from '../lib/i18n';
+import { FlowBox, ProjectFooter } from '../site/Blocks';
+import { Contact, EmailButton } from '../site/Contact';
 import { Nav } from '../site/Nav';
-import { PageStatus, useDocumentMeta } from '../site/PublicLayout';
+import { PageLink } from '../site/PageLink';
+import { useDocumentMeta, usePage } from '../site/PublicLayout';
 
 export function Portfolio() {
     const { locale } = useLocale();
-    const { data, error } = useApi(`/${locale}/portfolio`);
-
-    useDocumentMeta(data?.meta);
-
-    if (! data) {
-        return <PageStatus error={error} />;
-    }
-
+    const data = usePage(`/${locale}/portfolio`);
     const { person, paths } = data;
+
+    useDocumentMeta(data.meta);
+
+    // The three path pages are the main places to go from here: load them
+    // once the browser is idle so even a tap with no hover is instant.
+    useEffect(() => {
+        const warm = () => paths.forEach((path) => prefetch(`/${locale}/paths/${path.key}`));
+        const idle = window.requestIdleCallback ? window.requestIdleCallback(warm) : window.setTimeout(warm, 1200);
+
+        return () => (window.cancelIdleCallback ? window.cancelIdleCallback(idle) : window.clearTimeout(idle));
+    }, [locale, paths]);
 
     return (
         <div>
             <Nav person={person} paths={paths} current={null} />
 
-            <main id="main">
+            <main id="main" className="frame">
                 <Hero person={person} />
-                <Paths paths={paths} />
-                <Experience data={data} />
+                <Pipelines pipelines={data.pipelines} />
+                <Ledger data={data} />
+                {data.projects.length > 0 && <CaseFiles projects={data.projects} />}
+                {data.skills.length > 0 && <StackIndex groups={data.skills} />}
             </main>
 
             <Contact person={person} />
@@ -39,125 +48,233 @@ export function Portfolio() {
     );
 }
 
-function PathWord({ path, children }) {
-    return <span className={`theme-${path} text-path`}>{children}</span>;
-}
+/**
+ * What the hero's data cells list. Proper nouns, so never translated.
+ */
+const focus = {
+    SAP: 'ABAP, CDS views, OData v2/v4',
+    Web: 'PHP, Laravel, PostgreSQL',
+    Runtime: 'Docker, Nginx, Linux',
+};
 
 function Hero({ person }) {
     const { t } = useLocale();
 
-    const socials = [
-        ['GitHub', person.github_url],
-        ['LinkedIn', person.linkedin_url],
-    ].filter(([, url]) => url);
-
     return (
-        <section className="mx-auto flex max-w-[1440px] flex-col gap-8 px-5 pb-20 pt-16 sm:px-10 sm:pt-24 lg:gap-10 lg:px-20 lg:pb-32 lg:pt-36">
-            <div className="flex items-center gap-4">
-                {person.photo_url && (
-                    <img
-                        src={person.photo_url}
-                        alt={person.name}
-                        width="56"
-                        height="56"
-                        className="size-12 overflow-hidden rounded-full bg-line object-cover text-[0px] sm:size-14"
-                    />
-                )}
-                <div className="flex flex-col gap-1">
-                    <p className="text-[15px] font-semibold sm:text-[16px]">{person.name}</p>
-                    <p className="font-mono text-[11px] tracking-[0.06em] text-faint sm:text-xs">
-                        {[person.headline, person.location].filter(Boolean).join(' · ').toLocaleUpperCase()}
-                    </p>
-                </div>
+        <section className="cells border-t-0">
+            <div className="scanlines px-5 pb-12 pt-14 sm:px-8 lg:px-10 lg:pb-14 lg:pt-16">
+                <Macro as="h1" text={t('Backend developer.')} fit max={150} />
             </div>
 
-            <h1 className="max-w-[1120px] text-[clamp(2.625rem,6.4vw,5.25rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-balance">
-                <Trans
-                    k="I build across :sap, :web and :servers they run on."
-                    values={{
-                        sap: <PathWord path="sap">SAP</PathWord>,
-                        web: <PathWord path="web">{t('the web')}</PathWord>,
-                        servers: <PathWord path="infra">{t('the servers')}</PathWord>,
-                    }}
-                />
-            </h1>
+            <div className="grid grid-cols-[96px_1fr] gap-px bg-line sm:grid-cols-[150px_1fr] lg:grid-cols-[150px_1.3fr_1fr_1fr_auto]">
+                {person.photo_url && (
+                    <div className="halftone bg-base">
+                        <img
+                            src={person.photo_url}
+                            alt={person.name}
+                            width="150"
+                            height="150"
+                            fetchPriority="high"
+                            className="block h-full min-h-24 w-full object-cover"
+                        />
+                    </div>
+                )}
 
-            <p className="max-w-[560px] text-lg leading-[1.5] text-muted sm:text-[21px]">
-                {t('Full stack developer. Process first, screen second.')}
-            </p>
+                <p className={`bg-base p-5 text-[15px] leading-[1.6] text-soft sm:p-7 sm:text-[16px] ${person.photo_url ? '' : 'col-span-2'}`}>
+                    {t('I write the services between business rules and the database. SAP and PHP, in production since 2023.')}
+                </p>
 
-            <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-3">
-                <a
-                    href={`mailto:${person.email}`}
-                    className="flex h-13 items-center justify-center gap-2.5 rounded-full bg-ink px-6 text-[16px] font-medium text-surface transition-opacity hover:opacity-85"
-                >
-                    {t('Get in touch')}
-                    <Icon name="arrow-right" stroke={1.8} />
-                </a>
-                <div className="grid grid-cols-2 gap-2.5 sm:flex sm:gap-3">
-                    {socials.map(([label, url]) => (
-                        <a
-                            key={label}
-                            href={url}
-                            rel="noopener noreferrer"
-                            target="_blank"
-                            className="flex h-13 items-center justify-center rounded-full border border-line-strong bg-surface px-5.5 text-[16px] font-medium transition-colors hover:border-ink"
-                        >
-                            {label}
-                        </a>
-                    ))}
+                <dl className="col-span-2 grid grid-cols-2 gap-px bg-line lg:col-span-2">
+                    <div className="bg-base p-5 sm:p-7">
+                        <dt className="label">{t('Status')}</dt>
+                        <dd className="mt-1.5 flex items-center gap-2.5 text-[14px]">
+                            <span className="size-2 shrink-0 bg-live" aria-hidden="true" />
+                            {t('Open to backend roles')}
+                        </dd>
+                        <dt className="label mt-5">SAP</dt>
+                        <dd className="mt-1.5 text-[14px]" translate="no">
+                            {focus.SAP}
+                        </dd>
+                    </div>
+                    <div className="bg-base p-5 sm:p-7">
+                        <dt className="label">Web</dt>
+                        <dd className="mt-1.5 text-[14px]" translate="no">
+                            {focus.Web}
+                        </dd>
+                        <dt className="label mt-5">{t('Runtime')}</dt>
+                        <dd className="mt-1.5 text-[14px]" translate="no">
+                            {focus.Runtime}
+                        </dd>
+                    </div>
+                </dl>
+
+                <div className="col-span-2 flex items-end bg-base p-5 sm:p-7 lg:col-span-1">
+                    <EmailButton email={person.email} />
                 </div>
             </div>
         </section>
     );
 }
 
-function Paths({ paths }) {
+/**
+ * Each career path as the request path it is built on. A row links to the
+ * path page; its red focus node is named so it travels to that page's flow.
+ */
+function Pipelines({ pipelines }) {
     const { locale, t } = useLocale();
 
     return (
-        <section className="mx-auto flex max-w-[1440px] flex-col gap-6 px-5 pb-20 sm:px-10 lg:gap-8 lg:px-20 lg:pb-34">
-            <div className="flex items-end justify-between gap-4">
-                <h2 className="text-[28px] font-semibold leading-[1.1] tracking-[-0.03em] lg:text-[40px]">{t('Three paths')}</h2>
-                <p className="hidden font-mono text-[13px] text-faint sm:block">{t('Pick one to go deeper')}</p>
+        <section className="cells border-t-0 lg:grid-cols-[300px_1fr]">
+            <div className="px-6 py-10 sm:px-7">
+                <h2 className="macro text-[36px] leading-[0.92]">{t('Pipelines')}</h2>
+                <p className="mt-5 max-w-[34ch] text-[14px] leading-[1.6] text-muted">
+                    {t('The request paths I build and maintain, end to end.')}
+                </p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3 lg:gap-5">
-                {paths.map((path, index) => (
-                    <Reveal
-                        as={Link}
-                        key={path.key}
-                        index={index}
-                        to={`/${locale}/${path.key}`}
-                        className={`theme-${path.key} lift flex flex-col gap-5 rounded-[20px] border border-line bg-surface p-6 lg:min-h-[420px] lg:gap-7 lg:p-8`}
-                    >
-                        <div className="flex items-center justify-between">
-                            <span className="flex size-11 items-center justify-center rounded-xl bg-path-soft text-path lg:size-12">
-                                <Icon name={path.key} size={24} stroke={1.6} />
+            <div className="grid gap-px bg-line">
+                {pipelines.map((pipeline) => (
+                    <PageLink key={pipeline.key} to={`/${locale}/${pipeline.key}`} className="cell-link group block bg-base px-6 py-7 sm:px-8">
+                        <span className="label flex items-center justify-between gap-4">
+                            <span>{pipeline.title}</span>
+                            <span className="text-signal transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transform-none" aria-hidden="true">
+                                &gt;&gt;&gt;
                             </span>
-                            <span className="font-mono text-xs text-faint lg:text-[13px]">{path.number}</span>
-                        </div>
+                        </span>
+                        <span className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2" translate="no">
+                            {pipeline.nodes.map((node, index) => (
+                                <Fragment key={node.name}>
+                                    {index > 0 && (
+                                        <span className="text-[13px] text-signal" aria-hidden="true">
+                                            ---&gt;
+                                        </span>
+                                    )}
+                                    <FlowBox node={node} pathKey={pipeline.key} />
+                                </Fragment>
+                            ))}
+                        </span>
+                    </PageLink>
+                ))}
+            </div>
+        </section>
+    );
+}
 
-                        <div className="flex flex-col gap-2 lg:grow lg:gap-3">
-                            <h3 className="text-[22px] font-semibold leading-[1.15] tracking-[-0.02em] lg:text-[28px]">{path.card_title}</h3>
-                            <p className="text-[15px] leading-[1.55] text-muted lg:text-[16px]">{path.card}</p>
-                        </div>
+/**
+ * Experience as dated entries rather than a timeline.
+ */
+function Ledger({ data }) {
+    const { locale, t, choice } = useLocale();
+    const { experience, educations, languages, paths } = data;
+    const navFor = Object.fromEntries(paths.map((path) => [path.key, path.nav]));
 
-                        <div className="hidden flex-wrap gap-2 lg:flex">
-                            {path.highlights.map((tech) => (
-                                <span key={tech} className="rounded-full border border-line px-2.5 py-1.5 font-mono text-xs text-chip">
-                                    {tech}
-                                </span>
+    return (
+        <section className="mt-24 lg:mt-28">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+                <h2 className="macro text-[clamp(3.5rem,8vw,6rem)]">{t('Ledger')}</h2>
+                {experience.count > 0 && (
+                    <p className="label">
+                        {choice(':count entry|:count entries', experience.count)} / {experience.years}
+                    </p>
+                )}
+            </div>
+
+            <div className="cells">
+                <div className="label hidden grid-cols-[110px_110px_1.1fr_1.6fr_1fr] bg-raised md:grid" aria-hidden="true">
+                    <span className="px-4 py-4">{t('From')}</span>
+                    <span className="px-4 py-4">{t('To')}</span>
+                    <span className="px-4 py-4">{t('Company')}</span>
+                    <span className="px-4 py-4">{t('Role')}</span>
+                    <span className="px-4 py-4">{t('Paths')}</span>
+                </div>
+
+                <ol className="grid gap-px bg-line">
+                    {experience.items.map((row) => (
+                        <li key={row.id} className="grid grid-cols-2 bg-base text-[13.5px] md:grid-cols-[110px_110px_1.1fr_1.6fr_1fr] md:items-center">
+                            <span className="px-4 pb-1 pt-4 text-muted md:py-5 md:text-ink">
+                                <span className="sr-only">{t('From')} </span>
+                                {row.from}
+                            </span>
+                            <span className="px-4 pb-1 pt-4 text-right text-muted md:py-5 md:text-left md:text-ink">
+                                <span className="sr-only">{t('To')} </span>
+                                {row.to ?? <span className="text-signal">{t('Present')}</span>}
+                            </span>
+                            <span className="col-span-2 px-4 pt-2 font-bold md:col-span-1 md:py-5">{row.company}</span>
+                            <span className="col-span-2 px-4 pt-1 text-soft md:col-span-1 md:py-5 md:text-ink">{row.role}</span>
+                            <span className="col-span-2 flex flex-wrap gap-x-3 px-4 pb-4 pt-2 md:col-span-1 md:py-5">
+                                {row.paths.map((key) => (
+                                    <PageLink key={key} to={`/${locale}/${key}`} className="press uppercase tracking-[0.06em] text-signal hover:text-ink">
+                                        [ {navFor[key]} ]
+                                    </PageLink>
+                                ))}
+                            </span>
+                        </li>
+                    ))}
+                </ol>
+            </div>
+
+            {(educations.length > 0 || languages.length > 0) && (
+                <div className="cells mt-6 md:grid-cols-2">
+                    {educations.length > 0 && (
+                        <div className="px-5 py-6 sm:px-6">
+                            <h3 className="label">{t('Education')}</h3>
+                            {educations.map((education) => (
+                                <div key={education.id} className="mt-3">
+                                    <p className="text-[14.5px] font-bold">{education.degree}</p>
+                                    <p className="mt-1 text-[13.5px] text-muted">
+                                        {education.institution} / {education.start_year} - {education.end_year ?? t('Present')}
+                                    </p>
+                                </div>
                             ))}
                         </div>
-
-                        <div className="flex items-center justify-between lg:border-t lg:border-line lg:pt-5">
-                            <span className="font-mono text-[13px] text-faint">{path.years}</span>
-                            <span className="flex items-center gap-2 text-[15px] font-semibold text-path">
-                                {t('Explore')}
-                                <Icon name="arrow-right" stroke={1.8} />
-                            </span>
+                    )}
+                    {languages.length > 0 && (
+                        <div className="px-5 py-6 sm:px-6">
+                            <h3 className="label">{t('Languages')}</h3>
+                            <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5 text-[14px]">
+                                {languages.map((language) => (
+                                    <Fragment key={language.id}>
+                                        <dt className="font-bold">{language.name}</dt>
+                                        <dd className="text-muted">{language.level_label}</dd>
+                                    </Fragment>
+                                ))}
+                            </dl>
                         </div>
+                    )}
+                </div>
+            )}
+        </section>
+    );
+}
+
+/**
+ * Published projects. The first one leads; the rest stack beside it.
+ */
+function CaseFiles({ projects }) {
+    const { t } = useLocale();
+    const [lead, ...rest] = projects;
+
+    return (
+        <section className="mt-24 lg:mt-28">
+            <h2 className="macro mb-6 text-[clamp(3.5rem,8vw,6rem)]">{t('Case files')}</h2>
+            <div className={`cells ${rest.length > 0 ? 'lg:grid-cols-[1.35fr_1fr]' : ''}`}>
+                <Reveal as="article" className="flex flex-col justify-between gap-10 px-6 py-9 sm:px-9 lg:row-span-[var(--rows)]" style={{ '--rows': Math.max(rest.length, 1) }}>
+                    <div>
+                        {lead.year && <p className="label">{lead.year}</p>}
+                        <h3 className="macro mt-4 text-[clamp(1.75rem,3.2vw,2.75rem)] leading-[0.95]">{lead.title}</h3>
+                        {(lead.description || lead.summary) && (
+                            <p className="mt-6 max-w-[56ch] text-[15px] leading-[1.65] text-soft">{lead.description ?? lead.summary}</p>
+                        )}
+                    </div>
+                    <ProjectFooter project={lead} />
+                </Reveal>
+
+                {rest.map((project, index) => (
+                    <Reveal as="article" key={project.id} index={index + 1} className="flex flex-col gap-3 px-6 py-8 sm:px-8">
+                        {project.year && <p className="label">{project.year}</p>}
+                        <h3 className="text-[19px] font-bold uppercase tracking-[0.02em]">{project.title}</h3>
+                        {project.summary && <p className="text-[14.5px] leading-[1.65] text-soft">{project.summary}</p>}
+                        <ProjectFooter project={project} />
                     </Reveal>
                 ))}
             </div>
@@ -165,79 +282,29 @@ function Paths({ paths }) {
     );
 }
 
-function Experience({ data }) {
-    const { locale, t, choice } = useLocale();
-    const { experience, educations, languages, paths } = data;
-    const navFor = Object.fromEntries(paths.map((path) => [path.key, path.nav]));
+/**
+ * Skill groups from the admin, dense and mono.
+ */
+function StackIndex({ groups }) {
+    const { t } = useLocale();
 
     return (
-        <section className="border-t border-line">
-            <div className="mx-auto grid max-w-[1440px] gap-8 px-5 py-16 sm:px-10 lg:grid-cols-12 lg:gap-x-6 lg:px-20 lg:pb-32 lg:pt-28">
-                <div className="flex flex-col gap-3 lg:col-span-4">
-                    <h2 className="text-[28px] font-semibold leading-[1.1] tracking-[-0.03em] lg:text-[40px]">{t('Experience')}</h2>
-                    {experience.count > 0 && (
-                        <p className="font-mono text-[13px] text-faint">
-                            {choice(':count role|:count roles', experience.count)} · {experience.years}
-                        </p>
-                    )}
-                </div>
-
-                <div className="flex flex-col lg:col-span-8">
-                    <ol className="border-b border-line">
-                        {experience.items.map((row) => (
-                            <li
-                                key={row.id}
-                                className="grid gap-x-6 gap-y-1.5 border-t border-line py-5 sm:grid-cols-[170px_minmax(0,1fr)_auto] sm:items-center lg:py-6"
-                            >
-                                <div className="flex items-center justify-between sm:contents">
-                                    <span className="font-mono text-xs text-faint sm:text-[13px]">{row.range}</span>
-                                    <div className="flex gap-1.5 sm:order-last">
-                                        {row.paths.map((key) => (
-                                            <Link
-                                                key={key}
-                                                to={`/${locale}/${key}`}
-                                                className={`theme-${key} rounded-full bg-path-soft px-2.5 py-1 font-mono text-[11px] font-medium text-path sm:text-xs`}
-                                            >
-                                                {navFor[key]}
-                                            </Link>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-[17px] font-semibold tracking-[-0.01em] lg:text-lg">{row.role}</span>
-                                    <span className="text-sm text-muted lg:text-[15px]">{row.company}</span>
-                                </div>
-                            </li>
-                        ))}
-                    </ol>
-
-                    <div className="mt-10 grid gap-8 sm:grid-cols-2 sm:gap-6 lg:mt-12">
-                        {educations.length > 0 && (
-                            <div className="flex flex-col gap-2">
-                                <p className="font-mono text-xs tracking-[0.06em] text-faint">{t('Education').toLocaleUpperCase()}</p>
-                                {educations.map((education) => (
-                                    <div key={education.id} className="flex flex-col gap-2">
-                                        <p className="text-[16px] font-semibold">{education.degree}</p>
-                                        <p className="text-[15px] text-muted">
-                                            {education.institution} · {education.start_year} — {education.end_year ?? t('Present')}
-                                        </p>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        {languages.length > 0 && (
-                            <div className="flex flex-col gap-2">
-                                <p className="font-mono text-xs tracking-[0.06em] text-faint">{t('Languages').toLocaleUpperCase()}</p>
-                                {languages.map((language, index) => (
-                                    <p key={language.id} className={index === 0 ? 'text-[16px] font-semibold' : 'text-[15px] text-muted'}>
-                                        {language.name} — {language.level_label}
-                                    </p>
-                                ))}
-                            </div>
-                        )}
+        <section className="cells mt-24 lg:mt-28 lg:grid-cols-[300px_1fr]">
+            <div className="px-6 py-8 sm:px-7">
+                <h2 className="macro text-[36px] leading-[0.92]">{t('Stack index')}</h2>
+            </div>
+            {/* The last group stretches to the row's end, so no empty cell shows the line colour. */}
+            <div className="grid gap-px bg-line sm:grid-cols-2 xl:grid-cols-[repeat(var(--cols),minmax(0,1fr))]" style={{ '--cols': Math.min(groups.length, 5) }}>
+                {groups.map((group) => (
+                    <div key={group.id} className="bg-base px-6 py-7 last:[grid-column-end:-1]">
+                        <h3 className="label">{group.label}</h3>
+                        <ul className="mt-3 text-[14px] leading-[2]" translate="no">
+                            {group.skills.map((skill) => (
+                                <li key={skill}>{skill}</li>
+                            ))}
+                        </ul>
                     </div>
-                </div>
+                ))}
             </div>
         </section>
     );

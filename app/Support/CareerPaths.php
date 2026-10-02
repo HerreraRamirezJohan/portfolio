@@ -90,7 +90,7 @@ class CareerPaths
     }
 
     /**
-     * "2024 — 2026" spanning the given experiences, or null when there are none.
+     * "2024 - 2026" spanning the given experiences, or null when there are none.
      *
      * @param  Collection<int, WorkExperience>  $experiences
      */
@@ -106,7 +106,7 @@ class CareerPaths
             ? __('Present')
             : $experiences->max(fn (WorkExperience $row) => $row->end_date->year);
 
-        return $start == $end ? (string) $start : $start.' — '.$end;
+        return $start == $end ? (string) $start : $start.' - '.$end;
     }
 
     private static function normalise(string $name): string
