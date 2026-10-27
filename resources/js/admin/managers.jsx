@@ -3,6 +3,7 @@
 | its endpoint under /api/admin, a blank record, the form and a list row.
 */
 
+import { config } from '../lib/config';
 import { useLocale } from '../lib/i18n';
 import { blankTranslations, CollectionManager } from './CollectionManager';
 import { Field, FieldError, Input, inputClass, linkButton, localized } from './ui';
@@ -391,6 +392,204 @@ export function ProjectManager() {
                     </Field>
 
                     <Checkbox label={t('Published')} checked={form.is_published} onChange={(value) => setField(['is_published'], value)} />
+                </>
+            )}
+        />
+    );
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Services (the freelance home page)
+|--------------------------------------------------------------------------
+*/
+
+export function ServiceManager() {
+    const { t } = useLocale();
+
+    return (
+        <CollectionManager
+            title={t('Services')}
+            endpoint="/admin/services"
+            blank={() => ({
+                slug: '',
+                path: '',
+                rate_usd: '',
+                is_published: true,
+                title: blankTranslations(),
+                summary: blankTranslations(),
+                deliverables_text: blankTranslations(),
+            })}
+            // Topics are edited as one line each and sent as an array.
+            toForm={(row) => ({
+                ...row,
+                rate_usd: row.rate_usd ?? '',
+                deliverables_text: Object.fromEntries(Object.entries(row.deliverables).map(([locale, lines]) => [locale, lines.join('\n')])),
+            })}
+            toPayload={({ deliverables_text, ...form }) => ({
+                ...form,
+                deliverables: Object.fromEntries(
+                    Object.entries(deliverables_text).map(([locale, text]) => [locale, text.split('\n').map((line) => line.trim()).filter(Boolean)]),
+                ),
+            })}
+            renderRow={(row, locale) => (
+                <>
+                    <Title>
+                        {row.title[locale] || row.slug}
+                        {! row.is_published && (
+                            <span className="ml-1 rounded bg-stone-200 px-1.5 py-0.5 text-xs text-stone-600 dark:bg-stone-800 dark:text-stone-400">{t('Draft')}</span>
+                        )}
+                    </Title>
+                    <Subtitle>{row.summary[locale]}</Subtitle>
+                    <Meta>{row.rate_usd === null ? '' : `$${row.rate_usd} USD / ${t('hour')}`}</Meta>
+                </>
+            )}
+            renderForm={({ form, setField, errors, locale, isNew }) => (
+                <>
+                    <Field label={localized(t('Title'), locale)}>
+                        <Input
+                            form={form}
+                            setField={setField}
+                            path={['title', locale]}
+                            // Suggest a slug from the title the first time one is typed.
+                            onBlur={(event) => isNew && ! form.slug && setField(['slug'], slugify(event.target.value))}
+                        />
+                    </Field>
+
+                    <div className="grid gap-5 sm:grid-cols-3">
+                        <Field label={t('Slug')} error={errors.slug}>
+                            <Input form={form} setField={setField} path={['slug']} />
+                        </Field>
+                        <Field label={t('Hourly rate (USD)')} error={errors.rate_usd}>
+                            <Input form={form} setField={setField} path={['rate_usd']} type="number" min="0" step="1" />
+                            <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">{t('The Spanish page shows it in pesos at the day\'s exchange rate.')}</p>
+                        </Field>
+                        <Field label={t('Career path')} error={errors.path}>
+                            <select className={inputClass} value={form.path} onChange={(event) => setField(['path'], event.target.value)}>
+                                <option value="">{t('None')}</option>
+                                {config.paths.map((key) => (
+                                    <option key={key} value={key}>
+                                        {key}
+                                    </option>
+                                ))}
+                            </select>
+                            <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">{t('The page the "See the work" link opens.')}</p>
+                        </Field>
+                    </div>
+
+                    <Field label={localized(t('Summary'), locale)}>
+                        <Input form={form} setField={setField} path={['summary', locale]} rows={3} />
+                    </Field>
+
+                    <Field label={localized(t('Topics'), locale)}>
+                        <Input form={form} setField={setField} path={['deliverables_text', locale]} rows={5} />
+                        <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">{t('One per line.')}</p>
+                    </Field>
+
+                    <Checkbox label={t('Published')} checked={form.is_published} onChange={(value) => setField(['is_published'], value)} />
+                </>
+            )}
+        />
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Process steps (how the work runs)
+|--------------------------------------------------------------------------
+*/
+
+export function ProcessStepManager() {
+    const { t } = useLocale();
+
+    return (
+        <CollectionManager
+            title={t('Process')}
+            endpoint="/admin/process-steps"
+            blank={() => ({ title: blankTranslations(), body: blankTranslations() })}
+            renderRow={(row, locale) => (
+                <>
+                    <Title>{row.title[locale] || '—'}</Title>
+                    <Subtitle>{row.body[locale]}</Subtitle>
+                </>
+            )}
+            renderForm={({ form, setField, locale }) => (
+                <>
+                    <Field label={localized(t('Title'), locale)}>
+                        <Input form={form} setField={setField} path={['title', locale]} />
+                    </Field>
+                    <Field label={localized(t('Body'), locale)}>
+                        <Input form={form} setField={setField} path={['body', locale]} rows={3} />
+                    </Field>
+                </>
+            )}
+        />
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| FAQ
+|--------------------------------------------------------------------------
+*/
+
+export function FaqManager() {
+    const { t } = useLocale();
+
+    return (
+        <CollectionManager
+            title={t('FAQ')}
+            endpoint="/admin/faqs"
+            blank={() => ({ question: blankTranslations(), answer: blankTranslations() })}
+            renderRow={(row, locale) => (
+                <>
+                    <Title>{row.question[locale] || '—'}</Title>
+                    <Subtitle>{row.answer[locale]}</Subtitle>
+                </>
+            )}
+            renderForm={({ form, setField, locale }) => (
+                <>
+                    <Field label={localized(t('Question'), locale)}>
+                        <Input form={form} setField={setField} path={['question', locale]} />
+                    </Field>
+                    <Field label={localized(t('Answer'), locale)}>
+                        <Input form={form} setField={setField} path={['answer', locale]} rows={4} />
+                    </Field>
+                </>
+            )}
+        />
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Cost factors (what adds to the cost)
+|--------------------------------------------------------------------------
+*/
+
+export function CostFactorManager() {
+    const { t } = useLocale();
+
+    return (
+        <CollectionManager
+            title={t('Cost factors')}
+            endpoint="/admin/cost-factors"
+            blank={() => ({ title: blankTranslations(), body: blankTranslations() })}
+            renderRow={(row, locale) => (
+                <>
+                    <Title>{row.title[locale] || '—'}</Title>
+                    <Subtitle>{row.body[locale]}</Subtitle>
+                </>
+            )}
+            renderForm={({ form, setField, locale }) => (
+                <>
+                    <Field label={localized(t('Title'), locale)}>
+                        <Input form={form} setField={setField} path={['title', locale]} />
+                    </Field>
+                    <Field label={localized(t('Body'), locale)}>
+                        <Input form={form} setField={setField} path={['body', locale]} rows={2} />
+                    </Field>
                 </>
             )}
         />

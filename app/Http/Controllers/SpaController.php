@@ -17,12 +17,21 @@ use Illuminate\Contracts\View\View;
  */
 class SpaController extends Controller
 {
-    public function portfolio(): View
+    public function home(): View
     {
         return $this->page(
-            api: '/'.app()->getLocale().'/portfolio',
+            api: '/'.app()->getLocale().'/home',
             json: PublicContent::home(),
-            alternates: SiteMeta::alternates('portfolio'),
+            alternates: SiteMeta::alternates('home'),
+        );
+    }
+
+    public function cv(): View
+    {
+        return $this->page(
+            api: '/'.app()->getLocale().'/cv',
+            json: PublicContent::cv(),
+            alternates: SiteMeta::alternates('cv'),
         );
     }
 

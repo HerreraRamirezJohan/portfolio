@@ -19,6 +19,10 @@ const sections = [
     ['/admin/skills', 'Technical Skills'],
     ['/admin/languages', 'Languages'],
     ['/admin/projects', 'Projects'],
+    ['/admin/services', 'Services'],
+    ['/admin/process', 'Process'],
+    ['/admin/faq', 'FAQ'],
+    ['/admin/costs', 'Cost factors'],
 ];
 
 export function AdminLayout() {

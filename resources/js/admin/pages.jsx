@@ -3,12 +3,12 @@
 | and the profile form.
 */
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { csrfCookie, http, validationErrors } from '../lib/http';
 import { useLocale } from '../lib/i18n';
 import { useApi } from '../lib/useApi';
-import { Field, FieldError, FormButtons, Input, inputClass, localized, LocaleTabs, primaryButton, setIn, Status, useFormLocale } from './ui';
+import { Field, FieldError, FormButtons, Input, inputClass, localized, LocaleTabs, primaryButton, secondaryButton, setIn, Status, useFormLocale } from './ui';
 
 /*
 |--------------------------------------------------------------------------
@@ -85,6 +85,10 @@ export function Dashboard() {
         ['/admin/skills', t('Technical Skills'), data.counts.skill_groups],
         ['/admin/languages', t('Languages'), data.counts.languages],
         ['/admin/projects', t('Projects'), data.counts.projects],
+        ['/admin/services', t('Services'), data.counts.services],
+        ['/admin/process', t('Process'), data.counts.process_steps],
+        ['/admin/faq', t('FAQ'), data.counts.faqs],
+        ['/admin/costs', t('Cost factors'), data.counts.cost_factors],
     ];
 
     return (
@@ -167,6 +171,8 @@ function ProfileEditor({ initial }) {
 
             <Status message={status} />
 
+            <PhotoField initialUrl={initial.photo_url} />
+
             <form className="space-y-5" onSubmit={save}>
                 <Field label={t('Name')} htmlFor="name" error={errors.name}>
                     <Input form={form} setField={setField} path={['name']} id="name" />
@@ -195,6 +201,83 @@ function ProfileEditor({ initial }) {
 
                 <FormButtons saving={saving} />
             </form>
+        </div>
+    );
+}
+
+/**
+ * The profile photo. It saves on its own (a file can't ride along in the JSON
+ * form), so picking or removing a photo takes effect immediately.
+ */
+function PhotoField({ initialUrl }) {
+    const { t } = useLocale();
+    const input = useRef(null);
+    const [url, setUrl] = useState(initialUrl);
+    const [error, setError] = useState(null);
+    const [busy, setBusy] = useState(false);
+
+    async function upload(event) {
+        const file = event.target.files[0];
+
+        if (! file) {
+            return;
+        }
+
+        const body = new FormData();
+        body.append('photo', file);
+
+        setBusy(true);
+        setError(null);
+
+        try {
+            const response = await http.post('/admin/profile/photo', body);
+            setUrl(response.data.data.photo_url);
+        } catch (failure) {
+            setError(validationErrors(failure).photo ?? t('Something went wrong.'));
+        } finally {
+            setBusy(false);
+            // Allow picking the same file again after a failure.
+            event.target.value = '';
+        }
+    }
+
+    async function remove() {
+        setBusy(true);
+        setError(null);
+
+        try {
+            await http.delete('/admin/profile/photo');
+            setUrl(null);
+        } catch {
+            setError(t('Something went wrong.'));
+        } finally {
+            setBusy(false);
+        }
+    }
+
+    return (
+        <div className="mb-6 flex items-center gap-4">
+            {url ? (
+                <img src={url} alt="" className="size-20 rounded-md object-cover" />
+            ) : (
+                <div className="size-20 rounded-md border border-dashed border-stone-300 dark:border-stone-700" aria-hidden="true" />
+            )}
+
+            <div>
+                <p className="text-sm font-medium text-stone-700 dark:text-stone-300">{t('Photo')}</p>
+                <div className="mt-1 flex gap-3">
+                    <button type="button" className={secondaryButton} disabled={busy} onClick={() => input.current.click()}>
+                        {busy ? t('Uploading…') : t('Upload photo')}
+                    </button>
+                    {url && (
+                        <button type="button" className={secondaryButton} disabled={busy} onClick={remove}>
+                            {t('Remove photo')}
+                        </button>
+                    )}
+                </div>
+                <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={upload} />
+                {error && <p role="alert" className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>}
+            </div>
         </div>
     );
 }

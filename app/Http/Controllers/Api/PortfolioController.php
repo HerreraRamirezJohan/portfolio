@@ -14,11 +14,19 @@ use Illuminate\Http\Response;
 class PortfolioController extends Controller
 {
     /**
-     * GET /api/{locale}/portfolio -- the home page.
+     * GET /api/{locale}/home -- the freelance landing page.
      */
     public function home(): Response
     {
         return $this->json(PublicContent::home());
+    }
+
+    /**
+     * GET /api/{locale}/cv -- the full CV.
+     */
+    public function cv(): Response
+    {
+        return $this->json(PublicContent::cv());
     }
 
     /**

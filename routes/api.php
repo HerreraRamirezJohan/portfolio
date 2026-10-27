@@ -1,11 +1,15 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\CostFactorController;
 use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Http\Controllers\Api\Admin\EducationController;
 use App\Http\Controllers\Api\Admin\ExperienceController;
+use App\Http\Controllers\Api\Admin\FaqController;
 use App\Http\Controllers\Api\Admin\LanguageController;
+use App\Http\Controllers\Api\Admin\ProcessStepController;
 use App\Http\Controllers\Api\Admin\ProfileController;
 use App\Http\Controllers\Api\Admin\ProjectController;
+use App\Http\Controllers\Api\Admin\ServiceController;
 use App\Http\Controllers\Api\Admin\SkillGroupController;
 use App\Http\Controllers\Api\PortfolioController;
 use App\Http\Controllers\Api\SessionController;
@@ -36,7 +40,8 @@ Route::prefix('{locale}')
     ->middleware([SetLocale::class, 'cache.headers:public;max_age=0;must_revalidate;etag'])
     ->withoutMiddleware(EnsureFrontendRequestsAreStateful::class)
     ->group(function () {
-        Route::get('portfolio', [PortfolioController::class, 'home'])->name('api.portfolio');
+        Route::get('home', [PortfolioController::class, 'home'])->name('api.home');
+        Route::get('cv', [PortfolioController::class, 'cv'])->name('api.cv');
 
         Route::get('paths/{path}', [PortfolioController::class, 'path'])
             ->whereIn('path', CareerPaths::keys())
@@ -71,6 +76,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
         Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::post('profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
+        Route::delete('profile/photo', [ProfileController::class, 'destroyPhoto'])->name('profile.photo.destroy');
 
         $collections = [
             'experiences' => ExperienceController::class,
@@ -78,6 +85,10 @@ Route::middleware('auth:sanctum')->group(function () {
             'skill-groups' => SkillGroupController::class,
             'languages' => LanguageController::class,
             'projects' => ProjectController::class,
+            'services' => ServiceController::class,
+            'process-steps' => ProcessStepController::class,
+            'faqs' => FaqController::class,
+            'cost-factors' => CostFactorController::class,
         ];
 
         foreach ($collections as $name => $controller) {

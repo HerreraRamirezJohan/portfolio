@@ -1,5 +1,5 @@
 {
-  "_source": "Extracted from /home/poyoevil/user_poyoevil_server_config/cv/build_cv_fullstack_es.py (es) and build_cv_fullstack.py (en). HTML entities decoded; <b>label:</b> prefixes split into label/body.",
+  "_source": "Transcribed from D:/Documents/cv/output/herrera_johan_cv_software-engineer_en.pdf and _es.pdf (Software Engineer CV), with the RAP and Fiori Elements detail from applications/2026-10_turtleTrax/cv_johan_herrera.pdf. HTML entities decoded; <b>label:</b> prefixes split into label/body.",
   "user": {
     "name": "Johan Osvaldo Herrera Ramírez",
     "email": "johanherreraramirez@outlook.com"
@@ -10,16 +10,16 @@
     "linkedin_url": "https://linkedin.com/in/johan-osvaldo-herrera-ramirez",
     "github_url": "https://github.com/HerreraRamirezJohan",
     "headline": {
-      "es": "Ingeniero Informático",
-      "en": "Computer Engineer"
+      "es": "Ingeniero de Software · Backend, APIs e Integraciones Empresariales",
+      "en": "Software Engineer · Backend, APIs & Enterprise Integrations"
     },
     "location": {
       "es": "Guadalajara, Jalisco, México",
       "en": "Guadalajara, Jalisco, Mexico"
     },
     "summary": {
-      "es": "Desarrollador full stack con experiencia en frontend y backend. En el frontend, React, JavaScript, HTML y CSS; en el backend, PHP y Laravel, Python y Java, sobre Linux, Docker y PostgreSQL. Lo que más he aprendido a valorar no es el código: es leer con cuidado la especificación funcional, encontrar los huecos antes de que empiece el desarrollo y sentarme con quien de verdad va a usar la solución. Casi todo lo que rompe un proyecto es una regla de negocio que nadie documentó, no la elección de un framework. Trabajo cerca de las áreas del negocio; en Global Asiática con las áreas de almacén y calidad alrededor del módulo QM de SAP, que fue donde aprendí a pensar primero en el proceso y después en la pantalla.",
-      "en": "Full stack developer with experience across frontend and backend. On the frontend, React, JavaScript, HTML and CSS; on the backend, PHP and Laravel, Python and Java, running on Linux, Docker and PostgreSQL. The part I've come to value most isn't the code: it's reading the functional specification carefully, finding the gaps before development starts, and sitting down with the people who will actually use the thing. Most of what breaks a project is a business rule nobody wrote down, not a framework choice. I work close to the business areas, at Global Asiática with the warehouse and quality teams around SAP's QM module, which is where I learned to think about the process first and the screen second."
+      "es": "Ingeniero de software con más de dos años de experiencia profesional construyendo y manteniendo aplicaciones de negocio, tanto en backend como en frontend. Trabajo con PHP/Laravel, Java (Spring Boot), C#, Python y JavaScript/React, además de ABAP y OData en SAP, sobre Linux, Docker y PostgreSQL, con Git y Scrum. Mi ventaja son los requerimientos: leo con cuidado las especificaciones, encuentro las reglas de negocio que nadie documentó y hablo con quienes van a usar el sistema antes de escribir código, lo que ha significado menos retrabajo. Documento las decisiones técnicas, aprendo rápido sobre código existente y me gusta trabajar con ingenieros más experimentados.",
+      "en": "Software engineer with more than two years of professional experience building and maintaining business applications across backend and frontend. I work in PHP/Laravel, Java (Spring Boot), C#, Python and JavaScript/React, plus ABAP and OData in SAP, on Linux, Docker and PostgreSQL, using Git and Scrum. My edge is requirements: I read specifications closely, find the business rules nobody wrote down, and talk to the people who will use the system before writing code, which has meant less rework. I document technical decisions, learn quickly on existing codebases, and like working with more experienced engineers."
     }
   },
   "work_experiences": [
@@ -29,54 +29,59 @@
       "end_date": "2026-08-01",
       "is_current": false,
       "sort_order": 1,
-      "role": {
-        "es": "Desarrollador Backend, SAP y Sistemas Empresariales",
-        "en": "Backend Developer, SAP and Enterprise Systems"
-      },
+      "role": { "es": "Desarrollador ABAP", "en": "ABAP Developer" },
       "location": { "es": "Guadalajara, Jal.", "en": "Guadalajara, Jal." },
       "bullets": {
         "es": [
           {
-            "label": "Análisis de requerimientos",
-            "body": "leo completo cada documento de especificación funcional antes de estimar, buscando los huecos, normalmente en la forma en que se van a obtener los datos o en reglas de negocio que se dieron por hecho y nunca se escribieron, y devuelvo un documento breve de observaciones con las correcciones de flujo necesarias, mientras desarrollo las partes que no están en duda."
-          },
-          {
-            "label": "Trato directo con usuarios finales",
-            "body": "recorro el flujo real con las personas que van a usar el sistema, valido mi entendimiento contra lo que hacen todos los días y pongo dos o tres opciones sobre la mesa antes de escribir código. Bastante menos retrabajo al final de cada proyecto."
+            "label": "Objetos de negocio RAP",
+            "body": "construí objetos de negocio RAP en escenarios managed y unmanaged, escribiendo behavior definitions y clases de implementación con manejo de draft, determinations y validations, expuestos mediante servicios OData v4 para aplicaciones Fiori."
           },
           {
             "label": "Desarrollo de APIs",
-            "body": "diseño y construyo servicios OData (v2 y v4) como backend de front ends a la medida e integraciones con terceros, cubriendo entidades, asociaciones y operaciones CRUD/query, incluyendo la forma del payload, filtrado y manejo de errores."
+            "body": "diseñé y construí servicios OData como backend de front ends a la medida e integraciones con terceros: desplegué en QAS 1 servicio v4 (RAP) y 2 v2, cubriendo entidades, asociaciones, operaciones CRUD/query, filtrado y manejo de errores. Otras aplicaciones de la empresa también los consumen, entre ellas la migración de una base de datos Microsoft a OData."
           },
           {
-            "label": "Construcción de consultas con vistas CDS",
-            "body": "escribo vistas CDS como capas de consulta reutilizables, con joins, asociaciones, filtros y agregaciones compuestos para que una vista bien construida alimente varios reportes y endpoints en lugar de una consulta nueva cada vez. Trabajo de capa de consulta sobre HANA, no especialización en la base de datos."
+            "label": "Capa de consulta reutilizable",
+            "body": "escribí 4 vistas CDS reutilizables (joins, asociaciones, filtros, agregaciones) con anotaciones UI y de consumo, cada una con su interfaz Fiori, para que una vista bien construida alimentara varios reportes y endpoints en lugar de una consulta nueva cada vez."
           },
           {
             "label": "Front end y extensiones",
-            "body": "desarrollo y despliego aplicaciones SAPUI5/Fiori que consumen esas APIs, y uso user exits y BADIs para adaptar el software del proveedor al proceso de negocio sin romper la actualizabilidad."
+            "body": "desarrollé aplicaciones Fiori Elements y SAPUI5 freestyle sobre esas APIs y las desplegué en el Fiori Launchpad, entre ellas 2 para la jerarquía de productos, que redujeron el desarrollo que otras áreas (full stack, front end) tenían que hacer; usé user exits y BADIs para adaptar el software del proveedor sin romper las actualizaciones."
+          },
+          {
+            "label": "Análisis de requerimientos",
+            "body": "leí completa cada especificación funcional antes de estimar; en 2 requerimientos encontré huecos (normalmente en cómo se iban a obtener los datos o en reglas de negocio nunca escritas) y devolví observaciones por escrito mientras desarrollaba lo que no estaba en duda, para que nada se detuviera."
+          },
+          {
+            "label": "Trato con usuarios finales",
+            "body": "recorrí el flujo real con las personas que iban a usar el sistema, validé mi entendimiento contra su trabajo diario y puse dos o tres opciones sobre la mesa antes de escribir código. Bastante menos retrabajo al final de cada proyecto."
           }
         ],
         "en": [
           {
-            "label": "Requirements analysis",
-            "body": "read every functional specification document (FSD) end to end before estimating, looking for the holes, usually in how the data is meant to be obtained, or in business rules assumed but never written down, then returned a short observations document with the flow corrections needed, while developing the parts that weren't in question so nothing stalled."
-          },
-          {
-            "label": "Working directly with end users",
-            "body": "walked the real workflow with the people who would use the system, validated my understanding against what they did day to day, and put two or three options on the table before writing code. Noticeably less rework at the end of each project."
+            "label": "RAP business objects",
+            "body": "built RAP business objects in managed and unmanaged scenarios, writing behavior definitions and implementation classes with draft handling, determinations and validations, exposed through OData v4 services for Fiori apps."
           },
           {
             "label": "API development",
-            "body": "designed and built OData services (v2 and v4) as the backend for custom front ends and third-party integrations, covering entities, associations and CRUD/query operations, including payload shape, filtering and error handling."
+            "body": "designed and built OData services as the backend for custom front ends and third-party integrations: deployed 1 v4 (RAP) and 2 v2 services to QAS, covering entities, associations, CRUD/query operations, filtering and error handling. Other company apps also consume them, including a Microsoft database migration to OData."
           },
           {
-            "label": "Query building with CDS views",
-            "body": "wrote CDS views as reusable query layers, with joins, associations, filters and aggregations composed so one well-built view feeds several reports and endpoints instead of a new ad-hoc query each time. Query-layer work on top of HANA rather than HANA database specialisation."
+            "label": "Reusable query layer",
+            "body": "wrote 4 reusable CDS views (joins, associations, filters, aggregations) with UI and consumption annotations, each with its Fiori interface, so one well-built view fed several reports and endpoints instead of a new ad-hoc query each time."
           },
           {
             "label": "Front end and extensions",
-            "body": "built and deployed SAPUI5/Fiori applications consuming those APIs, and used user exits and BADIs to adapt vendor software to the business process without breaking upgradeability."
+            "body": "built Fiori Elements and freestyle SAPUI5 applications on those APIs and deployed them to the Fiori Launchpad, including 2 for the product hierarchy, which reduced the development other areas (full stack, front end) had to do; used user exits and BADIs to adapt vendor software without breaking upgrades."
+          },
+          {
+            "label": "Requirements analysis",
+            "body": "read every functional specification end to end before estimating; on 2 requirements I found gaps (usually in how the data was to be obtained, or in business rules never written down) and returned written observations while developing the parts not in question so nothing stalled."
+          },
+          {
+            "label": "Working with end users",
+            "body": "walked the real workflow with the people who would use the system, validated my understanding against their day-to-day work, and put two or three options on the table before writing code. Noticeably less rework at the end of each project."
           }
         ]
       }
@@ -112,7 +117,7 @@
           },
           {
             "label": "Backend empresarial (SAP)",
-            "body": "construí objetos ABAP a la medida (reportes, consultas de datos complejas, tablas y formularios) para logística y documentación financiera, y resolví tickets técnicos de forma interna, reduciendo la dependencia de una consultoría externa y bajando costo y tiempo de resolución."
+            "body": "construí objetos ABAP a la medida (reportes, consultas complejas, tablas propias, Smartforms) para logística y documentación financiera, y atendí en casa tickets de depuración, Smartforms e incidencias nuevas de 2 empresas que usan SAP (un laboratorio y una empresa de logística y distribución). La consultoría externa cobraba ese trabajo a 1,000 MXN por hora, así que bajaron sus horas de análisis, desarrollo y documentación."
           }
         ],
         "en": [
@@ -134,7 +139,7 @@
           },
           {
             "label": "Enterprise backend (SAP)",
-            "body": "built custom ABAP objects (reports, complex data queries, custom tables and forms) for logistics and financial documentation, and solved technical tickets in-house, cutting dependence on an external consultancy and reducing both cost and resolution time."
+            "body": "built custom ABAP objects (reports, complex queries, custom tables, Smartforms) for logistics and financial documentation, and handled debugging, Smartform and new-issue tickets in-house for 2 companies running SAP (a laboratory and a logistics and distribution company). The external consultancy billed this work at 1,000 MXN per hour, so its analysis, development and documentation hours dropped."
           }
         ]
       }
@@ -217,48 +222,140 @@
   "skill_groups": [
     {
       "sort_order": 1,
-      "label": { "es": "Backend y Front End", "en": "Backend & Front End" },
-      "description": {
-        "es": "PHP (nativo y Laravel), Java (Spring Boot), Python, C#, VB, ABAP / ABAP orientado a objetos; React, Ionic (apps multiplataforma), JavaScript, HTML/CSS, SAPUI5 / Fiori.",
-        "en": "PHP (native & Laravel), Java (Spring Boot), Python, C#, VB, ABAP / OO ABAP; React, Ionic (multiplatform apps), JavaScript, HTML/CSS, SAPUI5 / Fiori."
+      "label": {
+        "es": "Lenguajes y Frameworks",
+        "en": "Languages & Frameworks"
       },
-      "skills": ["PHP", "Laravel", "Java", "Spring Boot", "Python", "C#", "VB", "ABAP", "OO ABAP", "React", "Ionic", "JavaScript", "HTML/CSS", "SAPUI5", "Fiori"]
+      "description": {
+        "es": "PHP (nativo y Laravel), Java (Spring Boot), C#, Python, JavaScript, VB, ABAP / ABAP orientado a objetos.",
+        "en": "PHP (native & Laravel), Java (Spring Boot), C#, Python, JavaScript, VB, ABAP / OO ABAP."
+      },
+      "skills": [
+        "PHP",
+        "Laravel",
+        "Java",
+        "Spring Boot",
+        "Python",
+        "C#",
+        "JavaScript",
+        "VB"
+      ]
     },
     {
       "sort_order": 2,
-      "label": { "es": "APIs e Integración", "en": "APIs & Integration" },
+      "label": {
+        "es": "Front End",
+        "en": "Front End"
+      },
+      "description": {
+        "es": "React, Ionic (apps multiplataforma), HTML/CSS, SAPUI5 / Fiori.",
+        "en": "React, Ionic (multiplatform apps), HTML/CSS, SAPUI5 / Fiori."
+      },
+      "skills": [
+        "React",
+        "Ionic",
+        "HTML/CSS"
+      ]
+    },
+    {
+      "sort_order": 3,
+      "label": {
+        "es": "APIs e Integración",
+        "en": "APIs & Integration"
+      },
       "description": {
         "es": "Diseño y consumo de REST y SOAP, OData v2 y v4, integraciones con terceros (timbrado CFDI vía PAC), autenticación y manejo de errores, JSON/XML.",
         "en": "REST and SOAP design and consumption, OData v2 and v4, third-party integrations (CFDI stamping via PAC), authentication and error handling, JSON/XML."
       },
-      "skills": ["REST", "SOAP", "OData v2", "OData v4", "CFDI / PAC", "JSON", "XML"]
-    },
-    {
-      "sort_order": 3,
-      "label": { "es": "Bases de Datos", "en": "Databases" },
-      "description": {
-        "es": "PostgreSQL, MySQL, MS SQL Server. Diseño de esquemas, construcción y optimización de consultas, migraciones, vistas CDS como capa de consulta reutilizable sobre SAP HANA.",
-        "en": "PostgreSQL, MySQL, MS SQL Server. Schema design, query building and tuning, migrations, CDS views as a reusable query layer over SAP HANA."
-      },
-      "skills": ["PostgreSQL", "MySQL", "MS SQL Server", "SAP HANA", "CDS Views"]
+      "skills": [
+        "REST",
+        "SOAP",
+        "OData v2",
+        "OData v4",
+        "CFDI / PAC",
+        "JSON",
+        "XML"
+      ]
     },
     {
       "sort_order": 4,
-      "label": { "es": "Infraestructura y Herramientas", "en": "Infrastructure & Tooling" },
-      "description": {
-        "es": "Docker y Docker Compose, administración de servidores Linux (Nginx/Apache, cron, respaldos), Git/GitHub, Azure, Pandas/NumPy.",
-        "en": "Docker and Docker Compose, Linux server administration (Nginx/Apache, cron, backups), Git/GitHub, Azure, Pandas/NumPy."
+      "label": {
+        "es": "SAP S/4HANA",
+        "en": "SAP S/4HANA"
       },
-      "skills": ["Docker", "Docker Compose", "Linux", "Nginx", "Apache", "Git", "GitHub", "Azure", "Pandas", "NumPy"]
+      "description": {
+        "es": "ABAP y ABAP Objects, ABAP SQL (Open SQL), escenarios RAP managed y unmanaged con draft, behavior definitions e implementaciones, determinations y validations; vistas CDS con anotaciones UI y de consumo; Fiori Elements y SAPUI5 freestyle desplegadas en el Fiori Launchpad; Smartforms, BAPI/RFC, user exits y BADIs; Eclipse ADT, SAP GUI, transportes DEV → QAS.",
+        "en": "ABAP and ABAP Objects, ABAP SQL (Open SQL), RAP managed and unmanaged scenarios with draft handling, behavior definitions and implementations, determinations and validations; CDS views with UI and consumption annotations; Fiori Elements and freestyle SAPUI5 deployed to the Fiori Launchpad; Smartforms, BAPI/RFC, user exits and BADIs; Eclipse ADT, SAP GUI, DEV → QAS transports."
+      },
+      "skills": [
+        "ABAP",
+        "OO ABAP",
+        "RAP",
+        "CDS Views",
+        "Fiori Elements",
+        "SAPUI5",
+        "BAPI/RFC",
+        "BADIs",
+        "Smartforms",
+        "ADT"
+      ]
     },
     {
       "sort_order": 5,
-      "label": { "es": "Análisis y Habilidades Blandas", "en": "Analysis & Soft Skills" },
-      "description": {
-        "es": "Análisis y levantamiento de requerimientos con usuarios finales; revisión de documentos de especificación funcional y devolución de observaciones escritas sobre huecos y reglas de negocio no documentadas antes de desarrollar; validación de procesos; causa raíz (5 Por qués); Scrum.",
-        "en": "Requirements analysis and elicitation with end users; reviewing functional specification documents (FSD / BRD) and returning written observations on gaps and undocumented business rules before development starts; process validation; root-cause analysis (5 Whys); Scrum."
+      "label": {
+        "es": "Bases de Datos",
+        "en": "Databases"
       },
-      "skills": ["Requirements Analysis", "FSD / BRD Review", "Process Validation", "5 Whys", "Scrum"]
+      "description": {
+        "es": "PostgreSQL, MySQL, MS SQL Server. Diseño de esquemas, optimización de consultas, migraciones, vistas CDS como capa de consulta reutilizable sobre SAP HANA.",
+        "en": "PostgreSQL, MySQL, MS SQL Server. Schema design, query tuning, migrations, CDS views as a reusable query layer over SAP HANA."
+      },
+      "skills": [
+        "PostgreSQL",
+        "MySQL",
+        "MS SQL Server",
+        "SAP HANA"
+      ]
+    },
+    {
+      "sort_order": 6,
+      "label": {
+        "es": "Infraestructura y Herramientas",
+        "en": "Infrastructure & Tooling"
+      },
+      "description": {
+        "es": "Docker y Docker Compose, administración de servidores Linux (Nginx/Apache, cron, respaldos), Git/GitHub, Azure, Pandas/NumPy para ETL.",
+        "en": "Docker and Docker Compose, Linux server administration (Nginx/Apache, cron, backups), Git/GitHub, Azure, Pandas/NumPy for ETL."
+      },
+      "skills": [
+        "Docker",
+        "Docker Compose",
+        "Linux",
+        "Nginx",
+        "Apache",
+        "Git",
+        "GitHub",
+        "Azure",
+        "Pandas",
+        "NumPy"
+      ]
+    },
+    {
+      "sort_order": 7,
+      "label": {
+        "es": "Prácticas",
+        "en": "Practices"
+      },
+      "description": {
+        "es": "Análisis de requerimientos con usuarios finales; revisión de especificaciones funcionales (FSD / BRD) y devolución de observaciones escritas sobre huecos; análisis de causa raíz (5 Por qués); Scrum.",
+        "en": "Requirements analysis with end users; reviewing functional specifications (FSD / BRD) and returning written observations on gaps; root-cause analysis (5 Whys); Scrum."
+      },
+      "skills": [
+        "Requirements Analysis",
+        "FSD / BRD Review",
+        "5 Whys",
+        "Scrum"
+      ]
     }
   ],
   "languages": [

@@ -4,10 +4,14 @@ namespace App\Support;
 
 use App\Http\Resources\CareerPathResource;
 use App\Http\Resources\CareerPathSummaryResource;
+use App\Http\Resources\CostFactorResource;
 use App\Http\Resources\EducationResource;
+use App\Http\Resources\FaqResource;
 use App\Http\Resources\LanguageResource;
 use App\Http\Resources\PersonResource;
+use App\Http\Resources\ProcessStepResource;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\ServiceResource;
 use App\Http\Resources\SkillGroupResource;
 use App\Http\Resources\WorkExperienceResource;
 use App\Models\User;
@@ -31,11 +35,41 @@ class PublicContent
     private const JSON_FLAGS = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR;
 
     /**
-     * GET /api/{locale}/portfolio -- the home page.
+     * GET /api/{locale}/home -- the freelance landing page.
      */
     public static function home(): string
     {
         return self::remember('home', function () {
+            $user = User::with([
+                'profile',
+                'workExperiences',
+                'services' => fn ($query) => $query->published(),
+                'processSteps',
+                'faqs',
+                'costFactors',
+            ])->firstOrFail();
+
+            return [
+                'meta' => SiteMeta::home($user),
+                'person' => new PersonResource($user),
+                'services' => ServiceResource::collection($user->services),
+                'cost_factors' => CostFactorResource::collection($user->costFactors),
+                'process' => ProcessStepResource::collection($user->processSteps),
+                'faqs' => FaqResource::collection($user->faqs),
+                'experience' => [
+                    'count' => $user->workExperiences->count(),
+                    'years' => CareerPaths::years($user->workExperiences),
+                ],
+            ];
+        });
+    }
+
+    /**
+     * GET /api/{locale}/cv -- the full CV.
+     */
+    public static function cv(): string
+    {
+        return self::remember('cv', function () {
             $user = User::with([
                 'profile',
                 'workExperiences',
@@ -46,7 +80,7 @@ class PublicContent
             ])->firstOrFail();
 
             return [
-                'meta' => SiteMeta::home($user),
+                'meta' => SiteMeta::cv($user),
                 'person' => new PersonResource($user),
                 'paths' => self::paths($user),
                 // Each path's flow, drawn as a pipeline row that links to the path page.
@@ -117,6 +151,7 @@ class PublicContent
     {
         foreach (config('portfolio.locales') as $locale) {
             Cache::forget(self::key($locale, 'home'));
+            Cache::forget(self::key($locale, 'cv'));
 
             foreach (CareerPaths::keys() as $path) {
                 Cache::forget(self::key($locale, 'path.'.$path));

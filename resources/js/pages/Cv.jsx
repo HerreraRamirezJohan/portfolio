@@ -1,23 +1,22 @@
 /*
-| /{locale} -- hero, pipelines (one per career path), the experience
+| /{locale}/cv -- hero, pipelines (one per career path), the experience
 | ledger, education/languages, case files, stack index and contact.
-| Data: GET /api/{locale}/portfolio.
+| Data: GET /api/{locale}/cv.
 */
 
 import { Fragment, useEffect } from 'react';
 import { Macro } from '../components/Macro';
-import { Reveal } from '../components/Reveal';
 import { prefetch } from '../lib/cache';
 import { useLocale } from '../lib/i18n';
-import { FlowBox, ProjectFooter } from '../site/Blocks';
+import { FlowBox, ProjectCells } from '../site/Blocks';
 import { Contact, EmailButton } from '../site/Contact';
 import { Nav } from '../site/Nav';
 import { PageLink } from '../site/PageLink';
 import { useDocumentMeta, usePage } from '../site/PublicLayout';
 
-export function Portfolio() {
+export function Cv() {
     const { locale } = useLocale();
-    const data = usePage(`/${locale}/portfolio`);
+    const data = usePage(`/${locale}/cv`);
     const { person, paths } = data;
 
     useDocumentMeta(data.meta);
@@ -33,7 +32,7 @@ export function Portfolio() {
 
     return (
         <div>
-            <Nav person={person} paths={paths} current={null} />
+            <Nav person={person} paths={paths} current="cv" />
 
             <main id="main" className="frame">
                 <Hero person={person} />
@@ -252,32 +251,11 @@ function Ledger({ data }) {
  */
 function CaseFiles({ projects }) {
     const { t } = useLocale();
-    const [lead, ...rest] = projects;
 
     return (
         <section className="mt-24 lg:mt-28">
             <h2 className="macro mb-6 text-[clamp(3.5rem,8vw,6rem)]">{t('Case files')}</h2>
-            <div className={`cells ${rest.length > 0 ? 'lg:grid-cols-[1.35fr_1fr]' : ''}`}>
-                <Reveal as="article" className="flex flex-col justify-between gap-10 px-6 py-9 sm:px-9 lg:row-span-[var(--rows)]" style={{ '--rows': Math.max(rest.length, 1) }}>
-                    <div>
-                        {lead.year && <p className="label">{lead.year}</p>}
-                        <h3 className="macro mt-4 text-[clamp(1.75rem,3.2vw,2.75rem)] leading-[0.95]">{lead.title}</h3>
-                        {(lead.description || lead.summary) && (
-                            <p className="mt-6 max-w-[56ch] text-[15px] leading-[1.65] text-soft">{lead.description ?? lead.summary}</p>
-                        )}
-                    </div>
-                    <ProjectFooter project={lead} />
-                </Reveal>
-
-                {rest.map((project, index) => (
-                    <Reveal as="article" key={project.id} index={index + 1} className="flex flex-col gap-3 px-6 py-8 sm:px-8">
-                        {project.year && <p className="label">{project.year}</p>}
-                        <h3 className="text-[19px] font-bold uppercase tracking-[0.02em]">{project.title}</h3>
-                        {project.summary && <p className="text-[14.5px] leading-[1.65] text-soft">{project.summary}</p>}
-                        <ProjectFooter project={project} />
-                    </Reveal>
-                ))}
-            </div>
+            <ProjectCells projects={projects} />
         </section>
     );
 }
@@ -288,15 +266,19 @@ function CaseFiles({ projects }) {
 function StackIndex({ groups }) {
     const { t } = useLocale();
 
+    // Up to five groups share one row; more wrap into balanced rows. The last
+    // group takes whatever is left of its row, so no empty cell shows the line.
+    const cols = groups.length <= 5 ? groups.length : Math.ceil(groups.length / 2);
+    const tail = cols - (groups.length % cols || cols) + 1;
+
     return (
         <section className="cells mt-24 lg:mt-28 lg:grid-cols-[300px_1fr]">
             <div className="px-6 py-8 sm:px-7">
                 <h2 className="macro text-[36px] leading-[0.92]">{t('Stack index')}</h2>
             </div>
-            {/* The last group stretches to the row's end, so no empty cell shows the line colour. */}
-            <div className="grid gap-px bg-line sm:grid-cols-2 xl:grid-cols-[repeat(var(--cols),minmax(0,1fr))]" style={{ '--cols': Math.min(groups.length, 5) }}>
+            <div className="grid gap-px bg-line sm:grid-cols-2 xl:grid-cols-[repeat(var(--cols),minmax(0,1fr))]" style={{ '--cols': cols, '--tail': tail }}>
                 {groups.map((group) => (
-                    <div key={group.id} className="bg-base px-6 py-7 last:[grid-column-end:-1]">
+                    <div key={group.id} className="bg-base px-6 py-7 sm:last:odd:col-span-2 xl:last:col-[span_var(--tail)]">
                         <h3 className="label">{group.label}</h3>
                         <ul className="mt-3 text-[14px] leading-[2]" translate="no">
                             {group.skills.map((skill) => (

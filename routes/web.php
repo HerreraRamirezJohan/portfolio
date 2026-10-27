@@ -23,7 +23,8 @@ Route::prefix('{locale}')
     ->whereIn('locale', config('portfolio.locales'))
     ->middleware(SetLocale::class)
     ->group(function () {
-        Route::get('/', [SpaController::class, 'portfolio'])->name('portfolio');
+        Route::get('/', [SpaController::class, 'home'])->name('home');
+        Route::get('cv', [SpaController::class, 'cv'])->name('cv');
 
         Route::get('{path}', [SpaController::class, 'path'])
             ->whereIn('path', CareerPaths::keys())
@@ -47,7 +48,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('auth')->group(function () {
         Route::get('/', [SpaController::class, 'admin'])->name('dashboard');
         Route::get('{section}', [SpaController::class, 'admin'])
-            ->whereIn('section', ['profile', 'experience', 'education', 'skills', 'languages', 'projects'])
+            ->whereIn('section', ['profile', 'experience', 'education', 'skills', 'languages', 'projects', 'services', 'process', 'faq', 'costs'])
             ->name('section');
     });
 });

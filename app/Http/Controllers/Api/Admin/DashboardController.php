@@ -12,6 +12,7 @@ class DashboardController extends Controller
     {
         $user = User::withCount([
             'workExperiences', 'educations', 'skillGroups', 'languages', 'projects',
+            'services', 'processSteps', 'faqs', 'costFactors',
         ])->firstOrFail();
 
         return response()->json(['data' => [
@@ -23,6 +24,10 @@ class DashboardController extends Controller
                 'skill_groups' => $user->skill_groups_count,
                 'languages' => $user->languages_count,
                 'projects' => $user->projects_count,
+                'services' => $user->services_count,
+                'process_steps' => $user->process_steps_count,
+                'faqs' => $user->faqs_count,
+                'cost_factors' => $user->cost_factors_count,
             ],
         ]]);
     }

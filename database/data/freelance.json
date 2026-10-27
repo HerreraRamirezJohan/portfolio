@@ -1,0 +1,194 @@
+{
+    "_source": "Starter copy for the freelance home page. Seeded by FreelanceSeeder (fresh install, or once with db:seed --class=FreelanceSeeder); edit it afterwards in the admin panel. Hourly rates are US dollars (rate_usd); the Spanish page shows them converted to pesos at the day's exchange rate.",
+    "services": [
+        {
+            "slug": "programacion-web",
+            "path": "web",
+            "sort_order": 1,
+            "rate_usd": 15,
+            "title": {
+                "en": "Web programming",
+                "es": "Programación web"
+            },
+            "summary": {
+                "en": "Websites, web systems and APIs, designed for people and built to be found.",
+                "es": "Sitios web, sistemas web y APIs, diseñados para las personas y hechos para que te encuentren."
+            },
+            "deliverables": {
+                "en": ["UI/UX design", "Mobile design", "SEO/GEO analysis", "APIs and integrations"],
+                "es": ["Diseño UI/UX", "Diseño móvil", "Análisis SEO/GEO", "APIs e integraciones"]
+            }
+        },
+        {
+            "slug": "desarrollo-sap",
+            "path": "sap",
+            "sort_order": 2,
+            "rate_usd": 20,
+            "title": {
+                "en": "SAP development (ABAP)",
+                "es": "Desarrollo SAP (ABAP)"
+            },
+            "summary": {
+                "en": "Changes and new developments in the SAP you already use, analysed, tested and documented.",
+                "es": "Cambios y desarrollos nuevos en el SAP que ya usas, analizados, probados y documentados."
+            },
+            "deliverables": {
+                "en": ["Analysis", "Development", "Testing", "Documentation"],
+                "es": ["Análisis", "Desarrollo", "Pruebas", "Documentación"]
+            }
+        }
+    ],
+    "cost_factors": [
+        {
+            "sort_order": 1,
+            "title": { "en": "UI/UX design", "es": "Diseño UI/UX" },
+            "body": {
+                "en": "How it looks and how easy it is to use, designed before it is built.",
+                "es": "Cómo se ve y qué tan fácil es de usar, diseñado antes de construirlo."
+            }
+        },
+        {
+            "sort_order": 2,
+            "title": { "en": "Mobile design", "es": "Diseño móvil" },
+            "body": {
+                "en": "Layouts that work well on phones, where most people will see it.",
+                "es": "Diseños que funcionan bien en el celular, donde la mayoría lo verá."
+            }
+        },
+        {
+            "sort_order": 3,
+            "title": { "en": "SEO/GEO analysis", "es": "Análisis SEO/GEO" },
+            "body": {
+                "en": "Making you easy to find in search engines and in answers from AI assistants.",
+                "es": "Que te encuentren en buscadores y en las respuestas de asistentes de IA."
+            }
+        },
+        {
+            "sort_order": 4,
+            "title": { "en": "Testing", "es": "Pruebas" },
+            "body": {
+                "en": "Checks before delivery so it works as agreed.",
+                "es": "Revisiones antes de entregar para que funcione como se acordó."
+            }
+        },
+        {
+            "sort_order": 5,
+            "title": { "en": "Documentation", "es": "Documentación" },
+            "body": {
+                "en": "Written notes so anyone can keep it running.",
+                "es": "Notas escritas para que cualquiera pueda mantenerlo funcionando."
+            }
+        },
+        {
+            "sort_order": 6,
+            "title": { "en": "Integrations", "es": "Integraciones" },
+            "body": {
+                "en": "Connecting with the tools you already use, such as email, payments or invoicing.",
+                "es": "Conexión con las herramientas que ya usas, como correo, pagos o facturación."
+            }
+        }
+    ],
+    "process_steps": [
+        {
+            "sort_order": 1,
+            "title": {
+                "en": "You tell me what you need",
+                "es": "Me cuentas qué necesitas"
+            },
+            "body": {
+                "en": "By email. A short description is enough.",
+                "es": "Por correo. Con una descripción corta basta."
+            }
+        },
+        {
+            "sort_order": 2,
+            "title": {
+                "en": "You get a written quote",
+                "es": "Recibes una cotización por escrito"
+            },
+            "body": {
+                "en": "The hours I expect and the rate, before anything starts. If the scope changes, I tell you first.",
+                "es": "Las horas que calculo y la tarifa, antes de empezar. Si el alcance cambia, te aviso primero."
+            }
+        },
+        {
+            "sort_order": 3,
+            "title": {
+                "en": "I build it and show you progress",
+                "es": "Lo construyo y te muestro avances"
+            },
+            "body": {
+                "en": "You review each part while it is built, so changes come early and cost less.",
+                "es": "Revisas cada parte mientras se construye, así los cambios llegan temprano y cuestan menos."
+            }
+        },
+        {
+            "sort_order": 4,
+            "title": {
+                "en": "You get it working",
+                "es": "Lo recibes funcionando"
+            },
+            "body": {
+                "en": "Published and explained, with 6 months of support and minor changes included.",
+                "es": "Publicado y explicado, con 6 meses de soporte y cambios menores incluidos."
+            }
+        }
+    ],
+    "faqs": [
+        {
+            "sort_order": 1,
+            "question": {
+                "en": "How much does it cost?",
+                "es": "¿Cuánto cuesta?"
+            },
+            "answer": {
+                "en": "I charge by the hour. Before we start you get a written quote with the hours I expect, and the final price follows it unless the scope changes.",
+                "es": "Cobro por hora. Antes de empezar recibes una cotización por escrito con las horas que calculo, y el precio final la sigue mientras el alcance no cambie."
+            }
+        },
+        {
+            "sort_order": 2,
+            "question": {
+                "en": "How do I pay?",
+                "es": "¿Cómo se paga?"
+            },
+            "answer": {
+                "en": "40% when you approve the quote, and the rest as agreed in it. A quote is valid for 15 days.",
+                "es": "40% al aprobar la cotización y el resto como se acuerde en ella. Una cotización es válida por 15 días."
+            }
+        },
+        {
+            "sort_order": 3,
+            "question": {
+                "en": "What do I need to send you?",
+                "es": "¿Qué te tengo que enviar?"
+            },
+            "answer": {
+                "en": "A short description of what you need. For a website, also your logo, photos and texts.",
+                "es": "Una descripción corta de lo que necesitas. Para un sitio web, también tu logotipo, fotos y textos."
+            }
+        },
+        {
+            "sort_order": 4,
+            "question": {
+                "en": "Who owns the work?",
+                "es": "¿De quién es el trabajo?"
+            },
+            "answer": {
+                "en": "You do. Once the project is paid, the code and the documentation are yours.",
+                "es": "Tuyo. Una vez pagado el proyecto, el código y la documentación son tuyos."
+            }
+        },
+        {
+            "sort_order": 5,
+            "question": {
+                "en": "What if I need changes later?",
+                "es": "¿Y si necesito cambios después?"
+            },
+            "answer": {
+                "en": "Six months of support and minor changes are included. Bigger changes are quoted before they start.",
+                "es": "Incluyo seis meses de soporte y cambios menores. Los cambios más grandes se cotizan antes de empezar."
+            }
+        }
+    ]
+}

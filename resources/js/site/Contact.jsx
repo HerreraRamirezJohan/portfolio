@@ -7,7 +7,14 @@ import { Macro } from '../components/Macro';
 import { Reveal } from '../components/Reveal';
 import { useLocale } from '../lib/i18n';
 
-function socials(person, t) {
+/**
+ * A mailto: link, with the subject filled in when there is one.
+ */
+export function mailto(email, subject) {
+    return subject ? `mailto:${email}?subject=${encodeURIComponent(subject)}` : `mailto:${email}`;
+}
+
+export function socials(person, t) {
     return [
         ['GitHub', person.github_url],
         ['LinkedIn', person.linkedin_url],
@@ -19,7 +26,7 @@ function socials(person, t) {
  * Attribution for the PHP logo (CC BY-SA 4.0) and Tux, and the trademark
  * lines SAP and the Linux Foundation ask for.
  */
-function Credits() {
+export function Credits() {
     const { t } = useLocale();
 
     return (
@@ -31,12 +38,12 @@ function Credits() {
     );
 }
 
-export function EmailButton({ email }) {
+export function EmailButton({ email, label, subject }) {
     const { t } = useLocale();
 
     return (
-        <a href={`mailto:${email}`} className="btn-signal press">
-            [ {t('Email me')} ]
+        <a href={mailto(email, subject)} className="btn-signal press max-sm:gap-2 max-sm:px-4 max-sm:text-[13px] max-sm:tracking-[0.06em]">
+            [ {label ?? t('Email me')} ]
             <span aria-hidden="true" className="tracking-normal">
                 &gt;&gt;&gt;
             </span>
@@ -69,7 +76,7 @@ function Footer({ person }) {
     );
 }
 
-export function Contact({ person, compact = false }) {
+export function Contact({ person, compact = false, label, subject }) {
     const { t } = useLocale();
 
     return (
@@ -81,7 +88,7 @@ export function Contact({ person, compact = false }) {
                         <p className="text-[13.5px] text-muted">{person.email}</p>
                     </div>
                     <div className="flex items-center px-6 py-8">
-                        <EmailButton email={person.email} />
+                        <EmailButton email={person.email} label={label} subject={subject} />
                     </div>
                 </div>
             ) : (
@@ -91,8 +98,8 @@ export function Contact({ person, compact = false }) {
                         <p className="text-[15px] leading-[1.6] text-soft">
                             {t('I read every functional spec end to end before estimating. Yours included.')}
                         </p>
-                        <EmailButton email={person.email} />
-                        <a href={`mailto:${person.email}`} className="break-all text-[13.5px] text-muted hover:text-ink">
+                        <EmailButton email={person.email} label={label} subject={subject} />
+                        <a href={mailto(person.email, subject)} className="break-all text-[13.5px] text-muted hover:text-ink">
                             {person.email}
                         </a>
                     </div>

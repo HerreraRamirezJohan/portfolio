@@ -62,8 +62,8 @@ function Intro({ data }) {
         <section className="cells border-t-0 lg:grid-cols-[1fr_400px]">
             <div className="scanlines flex flex-col gap-8 px-5 pb-12 pt-6 sm:px-8 lg:px-10 lg:pb-14">
                 <nav aria-label={t('Breadcrumb')} className="label flex items-center gap-3">
-                    <PageLink to={`/${locale}`} className="press py-3 hover:text-ink">
-                        &lt;&lt; {t('All paths')}
+                    <PageLink to={`/${locale}/cv`} className="press py-3 hover:text-ink">
+                        &lt;&lt; {t('CV')}
                     </PageLink>
                     <span className="text-faint" aria-hidden="true">
                         /

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Education;
 use App\Models\Language;
+use App\Models\Profile;
 use App\Models\Project;
 use App\Models\SkillGroup;
 use App\Models\User;
@@ -16,8 +17,8 @@ use RuntimeException;
 /**
  * Seeds the portfolio from the real CV.
  *
- * Source of truth is database/data/cv.json, transcribed from the reportlab
- * generators in ~/user_poyoevil_server_config/cv (full-stack flavour, ES + EN).
+ * Source of truth is database/data/cv.json, transcribed from the Software
+ * Engineer CV (ES + EN), plus the RAP detail from the SAP-focused CV.
  *
  * Idempotent: re-running updates the existing rows rather than duplicating them.
  */
@@ -35,12 +36,21 @@ class CvSeeder extends Seeder
             ],
         );
 
+        $fresh = $user->wasRecentlyCreated;
+
         $this->seedProfile($user, $cv['profile']);
         $this->seedWorkExperiences($user, $cv['work_experiences']);
         $this->seedEducations($user, $cv['educations']);
         $this->seedSkillGroups($user, $cv['skill_groups']);
         $this->seedLanguages($user, $cv['languages']);
         $this->seedProjects($user, $cv['projects']);
+
+        // Only on a fresh install: after that the freelance copy belongs to
+        // the admin panel, so re-seeding the CV must not bring back what was
+        // deleted. An existing database runs FreelanceSeeder once by hand.
+        if ($fresh) {
+            $this->call(FreelanceSeeder::class);
+        }
 
         PublicContent::flush();
     }
@@ -78,11 +88,13 @@ class CvSeeder extends Seeder
      */
     private function seedProfile(User $user, array $data): void
     {
-        // Only claim a photo when the file is actually on disk, so a fresh
-        // checkout without storage/app/public/profile does not render a broken
-        // image. Re-seeding never clears a photo set through the admin.
-        $photo = 'profile/profile.webp';
+        // Fall back to the bundled default only when the file is actually on
+        // disk, so a fresh checkout without storage/app/public/profile does
+        // not render a broken image. A photo already set (e.g. uploaded
+        // through the admin) always wins, so re-seeding never replaces it.
+        $default = Profile::DEFAULT_PHOTO;
         $existing = $user->profile?->photo_path;
+        $photo = $existing ?: (Storage::disk('public')->exists($default) ? $default : null);
 
         $user->profile()->updateOrCreate(
             ['user_id' => $user->id],
@@ -91,7 +103,7 @@ class CvSeeder extends Seeder
                 'public_email' => $data['public_email'],
                 'linkedin_url' => $data['linkedin_url'],
                 'github_url' => $data['github_url'],
-                'photo_path' => Storage::disk('public')->exists($photo) ? $photo : $existing,
+                'photo_path' => $photo,
                 'headline' => $data['headline'],
                 'location' => $data['location'],
                 'summary' => $data['summary'],
@@ -160,6 +172,10 @@ class CvSeeder extends Seeder
                     ['sort_order' => $index + 1],
                 );
             }
+
+            // A skill that left the CV (or moved to another group) must not
+            // linger in the group it used to belong to.
+            $group->skills()->whereNotIn('name', $row['skills'])->delete();
         }
     }
 

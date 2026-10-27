@@ -25,31 +25,32 @@ class PortfolioPageTest extends TestCase
 
     public function test_the_shell_renders_the_head_for_crawlers(): void
     {
-        $this->get('/es')
+        $this->get('/es/cv')
             ->assertOk()
             ->assertSee('<html lang="es"', false)
-            ->assertSee('<title>Johan Osvaldo Herrera Ramírez — Ingeniero Informático</title>', false)
+            ->assertSee('<title>Johan Osvaldo Herrera Ramírez — Ingeniero de Software · Backend, APIs e Integraciones Empresariales</title>', false)
             ->assertSee('<div id="app"', false);
     }
 
     public function test_the_shell_links_every_language_version(): void
     {
-        $this->get('/es')->assertSee('hreflang="en" href="'.url('/en').'"', false);
+        $this->get('/es/cv')->assertSee('hreflang="en" href="'.url('/en/cv').'"', false);
     }
 
     public function test_an_unknown_locale_is_not_routable(): void
     {
         $this->get('/fr')->assertNotFound();
-        $this->getJson('/api/fr/portfolio')->assertNotFound();
+        $this->getJson('/api/fr/home')->assertNotFound();
+        $this->getJson('/api/fr/cv')->assertNotFound();
     }
 
     public function test_the_spanish_api_returns_the_cv(): void
     {
-        $response = $this->getJson('/api/es/portfolio')
+        $response = $this->getJson('/api/es/cv')
             ->assertOk()
             ->assertJsonPath('data.person.name', 'Johan Osvaldo Herrera Ramírez')
-            ->assertJsonPath('data.person.headline', 'Ingeniero Informático')
-            ->assertJsonPath('data.meta.title', 'Johan Osvaldo Herrera Ramírez — Ingeniero Informático');
+            ->assertJsonPath('data.person.headline', 'Ingeniero de Software · Backend, APIs e Integraciones Empresariales')
+            ->assertJsonPath('data.meta.title', 'Johan Osvaldo Herrera Ramírez — Ingeniero de Software · Backend, APIs e Integraciones Empresariales');
 
         $this->assertJsonMentions($response, 'MAVI de Occidente', 'Universidad de Guadalajara (CUCEI)', 'Ingeniería en Computación');
         $this->assertJsonDoesNotMention($response, 'DocChain');
@@ -57,29 +58,29 @@ class PortfolioPageTest extends TestCase
 
     public function test_the_english_api_returns_the_english_translations(): void
     {
-        $response = $this->getJson('/api/en/portfolio')->assertOk();
+        $response = $this->getJson('/api/en/cv')->assertOk();
 
         $this->assertJsonMentions(
             $response,
-            'Computer Engineer',
-            'Backend Developer, SAP and Enterprise Systems',
+            'Software Engineer · Backend, APIs & Enterprise Integrations',
+            'ABAP Developer',
             'Bachelor of Engineering in Computer Science',
         );
-        $this->assertJsonDoesNotMention($response, 'Ingeniero Informático');
+        $this->assertJsonDoesNotMention($response, 'Ingeniero de Software', 'Computer Engineer');
     }
 
     public function test_the_home_payload_lists_every_path_in_the_active_locale(): void
     {
-        $this->getJson('/api/es/portfolio')
+        $this->getJson('/api/es/cv')
             ->assertJsonPath('data.paths.*.key', ['sap', 'web', 'infra'])
             ->assertJsonPath('data.paths.0.card_title', 'SAP y empresa');
 
-        $this->getJson('/api/en/portfolio')->assertJsonPath('data.paths.0.card_title', 'SAP & enterprise');
+        $this->getJson('/api/en/cv')->assertJsonPath('data.paths.0.card_title', 'SAP & enterprise');
     }
 
     public function test_each_role_names_the_paths_it_belongs_to(): void
     {
-        $items = collect($this->getJson('/api/en/portfolio')->json('data.experience.items'))->keyBy('company');
+        $items = collect($this->getJson('/api/en/cv')->json('data.experience.items'))->keyBy('company');
 
         $this->assertSame(['sap'], $items['MAVI de Occidente']['paths']);
         $this->assertSame(['sap', 'web', 'infra'], $items['Global Asiática']['paths']);
@@ -87,7 +88,7 @@ class PortfolioPageTest extends TestCase
 
     public function test_ledger_rows_carry_month_stamps(): void
     {
-        $items = collect($this->getJson('/api/en/portfolio')->json('data.experience.items'))->keyBy('company');
+        $items = collect($this->getJson('/api/en/cv')->json('data.experience.items'))->keyBy('company');
 
         $this->assertSame('2026-03', $items['MAVI de Occidente']['from']);
         $this->assertSame('2026-08', $items['MAVI de Occidente']['to']);
@@ -96,7 +97,7 @@ class PortfolioPageTest extends TestCase
 
     public function test_each_path_is_a_pipeline_with_one_focus_node(): void
     {
-        $pipelines = collect($this->getJson('/api/es/portfolio')->json('data.pipelines'))->keyBy('key');
+        $pipelines = collect($this->getJson('/api/es/cv')->json('data.pipelines'))->keyBy('key');
 
         $this->assertSame(['sap', 'web', 'infra'], $pipelines->keys()->all());
         $this->assertSame('SAP y empresa', $pipelines['sap']['title']);
@@ -128,10 +129,25 @@ class PortfolioPageTest extends TestCase
             'sort_order' => 2,
         ]);
 
-        $response = $this->getJson('/api/en/portfolio')->assertJsonPath('data.projects.*.title', ['Multi-company ERP']);
+        $response = $this->getJson('/api/en/cv')->assertJsonPath('data.projects.*.title', ['Multi-company ERP']);
 
         $groups = $response->json('data.skills');
         $this->assertNotEmpty($groups);
         $this->assertContains('Laravel', $groups[0]['skills']);
+    }
+
+    public function test_the_sap_skills_are_grouped_apart_from_the_rest(): void
+    {
+        $groups = collect($this->getJson('/api/en/cv')->assertOk()->json('data.skills'))->keyBy('label');
+
+        $this->assertSame(
+            ['Languages & Frameworks', 'Front End', 'APIs & Integration', 'SAP S/4HANA', 'Databases', 'Infrastructure & Tooling', 'Practices'],
+            $groups->keys()->all(),
+        );
+        $this->assertContains('RAP', $groups['SAP S/4HANA']['skills']);
+        $this->assertContains('Fiori Elements', $groups['SAP S/4HANA']['skills']);
+
+        // The Spanish site has the same groups.
+        $this->assertCount(7, $this->getJson('/api/es/cv')->json('data.skills'));
     }
 }

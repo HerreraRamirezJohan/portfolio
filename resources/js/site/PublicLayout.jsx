@@ -24,10 +24,14 @@ export function PublicLayout() {
     }, [locale]);
 
     // Layout effect: the view transition snapshots the new page right after
-    // commit, and it must already be scrolled to the top by then.
+    // commit, and it must already be scrolled to the top by then. A link with
+    // a #hash (the nav's Services) lands on its section: the browser only does
+    // that by itself for a full page load.
     useLayoutEffect(() => {
         if (! hash) {
             window.scrollTo({ top: 0, behavior: 'instant' });
+        } else {
+            document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView();
         }
     }, [pathname, hash]);
 

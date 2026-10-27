@@ -42,4 +42,16 @@ class TechIconTest extends TestCase
         $this->assertFalse(TechIcon::isSap('PostgreSQL'));
         $this->assertFalse(TechIcon::isSap(null));
     }
+
+    public function test_sap_specific_terms_share_the_neutral_mark_but_open_standards_do_not(): void
+    {
+        foreach (['RAP', 'Fiori Elements', 'Smartforms', 'BADIs', 'BAPI/RFC'] as $name) {
+            $this->assertSame('sap', TechIcon::slug($name), $name);
+            $this->assertTrue(TechIcon::isSap($name), $name);
+        }
+
+        // OData is an open standard (also used outside SAP), so it stays a text chip.
+        $this->assertNull(TechIcon::slug('OData v2'));
+        $this->assertNull(TechIcon::slug('OData v4'));
+    }
 }

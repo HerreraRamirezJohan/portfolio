@@ -226,6 +226,105 @@
 
 /*
 |--------------------------------------------------------------------------
+| Light home
+|--------------------------------------------------------------------------
+|
+| The home page sells to business owners, so it is plain and light while the
+| CV and the path pages keep the dark Ledger look. `.site-light` sits inside
+| `.site` and only redefines the palette variables above, so every bg-base,
+| text-ink and border-line utility follows. Warm off-white ground, off-black
+| ink, one accent (a red dark enough for text), square-ish 8-12px corners,
+| the sans face instead of mono.
+|
+*/
+@layer components {
+    .site-light {
+        --c-base: #fbfaf7;
+        --c-raised: #ffffff;
+        --c-ink: #16140f;
+        --c-soft: #44413a;
+        --c-muted: #6b685f;
+        --c-faint: #c9c5ba;
+        --c-line: #e7e4dc;
+        --c-line-strong: #d4d0c5;
+        --c-signal: #c4301a;
+        --c-on-signal: #ffffff;
+        --c-live: #2f8f3a;
+
+        background-color: var(--c-base);
+        color: var(--c-ink);
+        color-scheme: light;
+        font-family: var(--font-sans);
+    }
+
+    html:has(.site-light) {
+        color-scheme: light;
+        background-color: #fbfaf7;
+    }
+
+    /* The main action: a solid ink button. */
+    .btn-ink {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border-radius: 8px;
+        background-color: var(--c-ink);
+        color: var(--c-base);
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1.2;
+        white-space: nowrap;
+        padding: 0.9rem 1.4rem;
+        transition:
+            background-color 160ms var(--ease-out-expo),
+            transform 160ms var(--ease-out-expo);
+    }
+
+    .btn-ink:hover {
+        background-color: #3a372f;
+    }
+
+    .btn-ink:active {
+        transform: scale(0.98);
+    }
+
+    /* Compact, but still a 44px touch target. */
+    .btn-ink-sm {
+        font-size: 14px;
+        padding: 0.8rem 0.95rem;
+    }
+
+    /* A quieter button for the second action on a row. */
+    .btn-line {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border: 1px solid var(--c-line-strong);
+        border-radius: 8px;
+        color: var(--c-ink);
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1.2;
+        white-space: nowrap;
+        padding: 0.85rem 1.3rem;
+        transition:
+            border-color 160ms var(--ease-out-expo),
+            transform 160ms var(--ease-out-expo);
+    }
+
+    .btn-line:hover {
+        border-color: var(--c-ink);
+    }
+
+    .btn-line:active {
+        transform: scale(0.98);
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
 | Motion
 |--------------------------------------------------------------------------
 |
@@ -305,7 +404,9 @@
         transition: none !important;
     }
 
-    .press:active {
+    .press:active,
+    .btn-ink:active,
+    .btn-line:active {
         transform: none !important;
     }
 

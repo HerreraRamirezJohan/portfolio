@@ -52,7 +52,7 @@ class CareerPathPageTest extends TestCase
         $roles = collect($this->getJson('/api/en/paths/sap')->json('data.roles'))->keyBy('company');
 
         $this->assertSame(
-            'OData services, CDS views and Fiori apps; FSD review before every estimate.',
+            'RAP business objects, OData services, CDS views and Fiori apps; FSD review before every estimate.',
             $roles['MAVI de Occidente']['blurb'],
         );
     }

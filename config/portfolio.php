@@ -37,6 +37,24 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Hourly rate currencies
+    |--------------------------------------------------------------------------
+    |
+    | Each service stores its hourly rate in US dollars. A locale listed here
+    | with another currency shows that rate converted (App\Support\HourlyRates,
+    | using the live rate from App\Support\ExchangeRate), rounded to the
+    | nearest `rate_rounding` units. Locales not listed show US dollars.
+    |
+    */
+    'currencies' => [
+        'es' => 'MXN',
+        'en' => 'USD',
+    ],
+
+    'rate_rounding' => 5,
+
+    /*
+    |--------------------------------------------------------------------------
     | Career paths
     |--------------------------------------------------------------------------
     |
@@ -56,7 +74,7 @@ return [
             'card' => 'OData APIs, CDS views and Fiori apps on SAP HANA.',
             'lead' => 'Backend work on SAP: APIs, query layers and Fiori front ends, designed around the business process first.',
             'highlights' => ['ABAP', 'OData', 'CDS', 'Fiori'],
-            'stack' => ['ABAP', 'OO ABAP', 'OData v2', 'OData v4', 'CDS Views', 'SAP HANA', 'SAPUI5', 'Fiori'],
+            'stack' => ['ABAP', 'OO ABAP', 'RAP', 'OData v2', 'OData v4', 'CDS Views', 'SAP HANA', 'SAPUI5', 'Fiori', 'Fiori Elements'],
             'facts' => ['Modules' => 'QM · Logistics · Finance'],
             'services' => [
                 'OData APIs' => 'v2 and v4 services behind custom front ends and third-party integrations.',
@@ -75,7 +93,7 @@ return [
             'quote' => 'Most of what breaks a project is a business rule nobody wrote down.',
             'quote_note' => 'I read the functional spec end to end and walk the process with its users before estimating.',
             'roles' => [
-                'MAVI de Occidente' => 'OData services, CDS views and Fiori apps; FSD review before every estimate.',
+                'MAVI de Occidente' => 'RAP business objects, OData services, CDS views and Fiori apps; FSD review before every estimate.',
                 'Global Asiática' => 'Custom ABAP for logistics and finance, around the QM module; tickets solved in-house.',
             ],
             'extras' => [],

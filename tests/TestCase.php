@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Testing\TestResponse;
 
 abstract class TestCase extends BaseTestCase
@@ -14,6 +15,11 @@ abstract class TestCase extends BaseTestCase
         // The suite asserts on the shell and the API, not on the asset
         // pipeline -- don't make it depend on `npm run build` having run.
         $this->withoutVite();
+
+        // No test may reach a real service (the exchange rate API). A test
+        // that needs an answer fakes it; the rest see the configured
+        // fallback rate.
+        Http::preventStrayRequests();
     }
 
     /**

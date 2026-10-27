@@ -6,7 +6,17 @@
 import { Route, Routes } from 'react-router';
 import { NotFound } from '../pages/NotFound';
 import { AdminLayout } from './AdminLayout';
-import { EducationManager, ExperienceManager, LanguageManager, ProjectManager, SkillGroupManager } from './managers';
+import {
+    EducationManager,
+    CostFactorManager,
+    ExperienceManager,
+    FaqManager,
+    LanguageManager,
+    ProcessStepManager,
+    ProjectManager,
+    ServiceManager,
+    SkillGroupManager,
+} from './managers';
 import { Dashboard, Login, ProfileForm } from './pages';
 
 export default function AdminRoutes() {
@@ -21,6 +31,10 @@ export default function AdminRoutes() {
                 <Route path="skills" element={<SkillGroupManager />} />
                 <Route path="languages" element={<LanguageManager />} />
                 <Route path="projects" element={<ProjectManager />} />
+                <Route path="services" element={<ServiceManager />} />
+                <Route path="process" element={<ProcessStepManager />} />
+                <Route path="faq" element={<FaqManager />} />
+                <Route path="costs" element={<CostFactorManager />} />
                 <Route path="*" element={<NotFound />} />
             </Route>
         </Routes>

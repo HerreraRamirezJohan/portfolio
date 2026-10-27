@@ -1,6 +1,7 @@
 /*
-| Shared public nav: three compartments of one ruled bar. `current` is the
-| active path key, or null on the home page.
+| Shared public nav: three compartments of one ruled bar. `current` is
+| 'cv', a path key, or null on the home page. A path page also lists its own
+| entry, since the paths themselves live on the CV.
 */
 
 import { useEffect, useRef, ViewTransition } from 'react';
@@ -11,6 +12,7 @@ import { PageLink } from './PageLink';
 
 export function Nav({ person, paths, current }) {
     const { locale, t } = useLocale();
+    const currentPath = paths.find((path) => path.key === current);
 
     // Named, so the bar holds still while the page underneath changes.
     return (
@@ -26,18 +28,23 @@ export function Nav({ person, paths, current }) {
                         </PageLink>
 
                         <nav aria-label={t('Main')} className="hidden h-16 items-center gap-1 px-3 md:flex">
-                            {paths.map((path) => (
-                                <PageLink
-                                    key={path.key}
-                                    to={`/${locale}/${path.key}`}
-                                    aria-current={current === path.key ? 'page' : undefined}
-                                    className={`press px-3 py-3 text-[12.5px] uppercase tracking-[0.1em] ${
-                                        current === path.key ? 'font-bold text-ink' : 'text-muted hover:text-ink'
-                                    }`}
-                                >
-                                    {current === path.key ? `[ ${path.nav} ]` : path.nav}
-                                </PageLink>
-                            ))}
+                            <PageLink to={`/${locale}#services`} className="press px-3 py-3 text-[12.5px] uppercase tracking-[0.1em] text-muted hover:text-ink">
+                                {t('Services')}
+                            </PageLink>
+                            <PageLink
+                                to={`/${locale}/cv`}
+                                aria-current={current === 'cv' ? 'page' : undefined}
+                                className={`press px-3 py-3 text-[12.5px] uppercase tracking-[0.1em] ${
+                                    current === 'cv' ? 'font-bold text-ink' : 'text-muted hover:text-ink'
+                                }`}
+                            >
+                                {current === 'cv' ? `[ ${t('CV')} ]` : t('CV')}
+                            </PageLink>
+                            {currentPath && (
+                                <span aria-current="page" className="px-3 py-3 text-[12.5px] font-bold uppercase tracking-[0.1em]">
+                                    [ {currentPath.nav} ]
+                                </span>
+                            )}
                             <a href="#contact" className="press px-3 py-3 text-[12.5px] uppercase tracking-[0.1em] text-muted hover:text-ink">
                                 {t('Contact')}
                             </a>
@@ -57,7 +64,7 @@ export function Nav({ person, paths, current }) {
 /**
  * The same page in every locale: swap the first path segment.
  */
-function LanguageSwitch() {
+export function LanguageSwitch() {
     const { locale } = useLocale();
     const { pathname } = useLocation();
     const rest = pathname.split('/').slice(2).join('/');
@@ -123,6 +130,25 @@ function MobileMenu({ paths, current }) {
             </summary>
 
             <nav aria-label={t('Main')} className="cells absolute right-0 top-[calc(100%+0.5rem)] w-64">
+                <PageLink
+                    to={`/${locale}#services`}
+                    className="cell-link flex items-center justify-between px-4 py-4 text-[13px] uppercase tracking-[0.08em]"
+                >
+                    {t('Services')}
+                    <span className="text-faint" aria-hidden="true">
+                        &gt;&gt;&gt;
+                    </span>
+                </PageLink>
+                <PageLink
+                    to={`/${locale}/cv`}
+                    aria-current={current === 'cv' ? 'page' : undefined}
+                    className="cell-link flex items-center justify-between px-4 py-4 text-[13px] uppercase tracking-[0.08em]"
+                >
+                    {t('CV')}
+                    <span className={current === 'cv' ? 'text-signal' : 'text-faint'} aria-hidden="true">
+                        &gt;&gt;&gt;
+                    </span>
+                </PageLink>
                 {paths.map((path) => (
                     <PageLink
                         key={path.key}

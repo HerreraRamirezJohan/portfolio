@@ -18,6 +18,17 @@ class SiteMeta
      */
     public static function home(User $user): array
     {
+        return [
+            'title' => $user->name.' - '.__('Websites, systems and SAP changes for your business'),
+            'description' => __('Freelance developer. Web programming and SAP (ABAP) development by the hour, with a written estimate before we start.'),
+        ];
+    }
+
+    /**
+     * @return array{title: string, description: string|null}
+     */
+    public static function cv(User $user): array
+    {
         $headline = $user->profile?->headline;
 
         return [

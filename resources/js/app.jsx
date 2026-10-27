@@ -9,8 +9,9 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import { config } from './lib/config';
 import { CareerPath } from './pages/CareerPath';
+import { Cv } from './pages/Cv';
+import { Home } from './pages/Home';
 import { NotFound } from './pages/NotFound';
-import { Portfolio } from './pages/Portfolio';
 import { PublicLayout } from './site/PublicLayout';
 
 // Public visitors never download the admin: it loads on the first /admin URL.
@@ -32,7 +33,8 @@ function App() {
                 />
 
                 <Route path=":locale" element={<PublicLayout />}>
-                    <Route index element={<Portfolio />} />
+                    <Route index element={<Home />} />
+                    <Route path="cv" element={<Cv />} />
                     <Route path=":path" element={<CareerPath />} />
                 </Route>
 

@@ -30,7 +30,7 @@ class AdminAccessTest extends TestCase
 
     public function test_guests_are_redirected_from_the_admin_shell_to_the_login(): void
     {
-        foreach (['/admin', '/admin/experience', '/admin/projects'] as $url) {
+        foreach (['/admin', '/admin/experience', '/admin/projects', '/admin/services', '/admin/process', '/admin/faq', '/admin/costs'] as $url) {
             $this->get($url)->assertRedirect(route('admin.login'));
         }
 
@@ -39,9 +39,16 @@ class AdminAccessTest extends TestCase
 
     public function test_guests_get_401_from_the_admin_api(): void
     {
-        foreach (['/api/user', '/api/admin/dashboard', '/api/admin/experiences', '/api/admin/projects'] as $url) {
+        foreach (['/api/user', '/api/admin/dashboard', '/api/admin/experiences', '/api/admin/projects', '/api/admin/services', '/api/admin/process-steps', '/api/admin/faqs', '/api/admin/cost-factors'] as $url) {
             $this->getJson($url)->assertUnauthorized();
         }
+    }
+
+    public function test_guests_cannot_write_to_the_admin_api(): void
+    {
+        $this->postJson('/api/admin/profile/photo')->assertUnauthorized();
+        $this->deleteJson('/api/admin/profile/photo')->assertUnauthorized();
+        $this->putJson('/api/admin/profile', ['name' => 'x'])->assertUnauthorized();
     }
 
     public function test_the_seeded_user_can_reach_the_admin(): void

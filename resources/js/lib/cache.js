@@ -71,7 +71,8 @@ export function prefetch(url) {
 }
 
 /**
- * The API URL behind a public page: /es -> /es/portfolio, /es/sap -> /es/paths/sap.
+ * The API URL behind a public page: /es -> /es/home, /es/cv -> /es/cv,
+ * /es/sap -> /es/paths/sap.
  */
 export function pageApi(pathname) {
     const [locale, path, ...rest] = pathname.split(/[?#]/)[0].split('/').filter(Boolean);
@@ -81,7 +82,11 @@ export function pageApi(pathname) {
     }
 
     if (! path) {
-        return `/${locale}/portfolio`;
+        return `/${locale}/home`;
+    }
+
+    if (path === 'cv') {
+        return `/${locale}/cv`;
     }
 
     return config.paths.includes(path) ? `/${locale}/paths/${path}` : null;

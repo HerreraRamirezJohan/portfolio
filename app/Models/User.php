@@ -78,4 +78,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(Project::class)->orderBy('sort_order');
     }
+
+    public function services(): HasMany
+    {
+        return $this->hasMany(Service::class)->orderBy('sort_order');
+    }
+
+    public function processSteps(): HasMany
+    {
+        return $this->hasMany(ProcessStep::class)->orderBy('sort_order');
+    }
+
+    public function faqs(): HasMany
+    {
+        return $this->hasMany(Faq::class)->orderBy('sort_order');
+    }
+
+    public function costFactors(): HasMany
+    {
+        return $this->hasMany(CostFactor::class)->orderBy('sort_order');
+    }
 }

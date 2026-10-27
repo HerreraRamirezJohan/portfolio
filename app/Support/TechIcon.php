@@ -50,6 +50,11 @@ class TechIcon
         'fiori' => 'sap',
         'sap hana' => 'sap',
         'cds views' => 'sap',
+        'rap' => 'sap',
+        'fiori elements' => 'sap',
+        'bapi/rfc' => 'sap',
+        'badis' => 'sap',
+        'smartforms' => 'sap',
     ];
 
     /**
